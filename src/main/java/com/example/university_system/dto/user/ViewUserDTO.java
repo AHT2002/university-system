@@ -9,7 +9,7 @@ import lombok.Setter;
 public class ViewUserDTO extends ViewBaseDTO {
     private String name;
     private String family;
-    private long nationalCode;
+    private String nationalCode;
     private String genderString;
     private Long birthDayTimeStamp;
     private String username;

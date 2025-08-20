@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface UserRepository<T extends UserEntity> extends JpaRepository<T, Long> {
-    Optional<T> findByNationalCode(long nationalCode);
+    Optional<T> findByNationalCode(String nationalCode);
     Optional<T> findByUsername(String username);
 }

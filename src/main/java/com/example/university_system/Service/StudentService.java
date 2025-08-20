@@ -3,6 +3,7 @@ package com.example.university_system.Service;
 
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.StudentEntity;
+import com.example.university_system.enums.Messages;
 import com.example.university_system.exception.ConflictException;
 import com.example.university_system.exception.NotFoundException;
 import com.example.university_system.repository.StudentRepository;
@@ -23,16 +24,19 @@ public class StudentService {
 
         optional = studentRepository.findByNationalCode(studentEntity.getNationalCode());
         if (optional.isPresent()) {
-            throw new ConflictException("The student with the desired National Code is available in the system.");
+//            throw new ConflictException("The student with the desired National Code is available in the system.");
+            throw new ConflictException((Messages.STUDENT_AVAILABLE_BY_NATIONALCODE.getDescription()));
         }
 
         optional = studentRepository.findByUsername(studentEntity.getUsername());
         if (optional.isPresent())
-            throw new ConflictException("The student with the desired username is available in the system.");
+//            throw new ConflictException("The student with the desired username is available in the system.");
+            throw new ConflictException((Messages.STUDENT_AVAILABLE_BY_USERNAME.getDescription()));
 
         optional = studentRepository.findByStdNumber(studentEntity.getStdNumber());
         if (optional.isPresent())
-            throw new ConflictException("The student with the desired StdNumber is available in the system.");
+//            throw new ConflictException("The student with the desired StdNumber is available in the system.");
+            throw new ConflictException((Messages.STUDENT_AVAILABLE_BY_STDNUMBER.getDescription()));
 
         return studentRepository.save(studentEntity);
     }
@@ -56,14 +60,16 @@ public class StudentService {
     public StudentEntity findById(Long id) {
         Optional<StudentEntity> optional = studentRepository.findById(id);
         if (optional.isEmpty())
-            throw new NotFoundException("Student Not found.");
+//            throw new NotFoundException("Student Not found.");
+            throw new NotFoundException(Messages.STUDENT_NOT_FOUND.getDescription());
         return optional.get();
     }
 
     public StudentEntity findByStdNumber(Long stdNumber) {
         Optional<StudentEntity> optional = studentRepository.findByStdNumber(stdNumber);
         if (optional.isEmpty())
-            throw new NotFoundException("Student Not found.");
+//            throw new NotFoundException("Student Not found.");
+            throw new NotFoundException(Messages.STUDENT_NOT_FOUND.getDescription());
         return optional.get();
     }
 

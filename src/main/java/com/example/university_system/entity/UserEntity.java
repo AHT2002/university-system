@@ -1,11 +1,13 @@
 package com.example.university_system.entity;
 
 
+import com.example.university_system.component.validators.NationalIdValidator;
 import com.example.university_system.enums.Gender;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -22,7 +24,7 @@ public class UserEntity extends BaseEntity {
     private String family;
 
     @Column(unique = true, updatable = false)
-    private long nationalCode;
+    private String nationalCode;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -37,4 +39,13 @@ public class UserEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String password;
+
+
+    @Transient
+    private transient NationalIdValidator nationalIdValidator;
+
+    public void setNationalId(String nationalId) {
+        nationalIdValidator.validateNationalId(nationalId);
+        this.nationalCode = nationalId;
+    }
 }

@@ -17,7 +17,7 @@ public class AddUserDTO extends AddBaseDTO {
     private String family;
 
     @Positive
-    private long nationalCode;
+    private String nationalCode;
 
     @NotBlank
     private String genderString;

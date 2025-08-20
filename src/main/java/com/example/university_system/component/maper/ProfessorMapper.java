@@ -1,4 +1,4 @@
-package com.example.university_system.maper;
+package com.example.university_system.component.maper;
 
 import com.example.university_system.dto.professor.AddProfessorDTO;
 import com.example.university_system.dto.professor.UpdateProfessorDTO;

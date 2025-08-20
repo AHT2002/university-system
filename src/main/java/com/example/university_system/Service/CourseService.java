@@ -4,6 +4,7 @@ package com.example.university_system.Service;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.ProfessorEntity;
 import com.example.university_system.entity.StudentEntity;
+import com.example.university_system.enums.Messages;
 import com.example.university_system.exception.ConflictException;
 import com.example.university_system.exception.NotFoundException;
 import com.example.university_system.repository.CourseRepository;
@@ -26,7 +27,8 @@ public class CourseService {
 
     public CourseEntity save(CourseEntity courseEntity) {
         if (courseRepository.findByCode(courseEntity.getCode()).isPresent())
-            throw new ConflictException("The course with the desired code is available in the system.");
+//            throw new ConflictException("The course with the desired code is available in the system.");
+            throw new ConflictException(Messages.COURSES_AVAILABLE_BY_CODE.getDescription());
         return courseRepository.save(courseEntity);
     }
 
@@ -40,7 +42,7 @@ public class CourseService {
     public CourseEntity findById(Long id) {
         Optional<CourseEntity> optional = courseRepository.findById(id);
         if (optional.isEmpty())
-            throw new NotFoundException("Course Not found.");
+            throw new NotFoundException(Messages.COURSE_NOT_FOUND.getDescription());
         return optional.get();
     }
 
@@ -48,7 +50,8 @@ public class CourseService {
     public CourseEntity findByCode(int code) {
         Optional<CourseEntity> optional = courseRepository.findByCode(code);
         if (optional.isEmpty())
-            throw new NotFoundException("Course Not found.");
+//            throw new NotFoundException("Course Not found.");
+            throw new NotFoundException(Messages.COURSE_NOT_FOUND.getDescription());
         return optional.get();
     }
 
@@ -91,7 +94,8 @@ public class CourseService {
         CourseEntity courseEntity = findByCode(codeCourse);
 
         if (!courseEntity.getStudentEntities().contains(studentEntity))
-            throw new NotFoundException("The student does not have this course.");
+//            throw new NotFoundException("The student does not have this course.");
+            throw new NotFoundException(Messages.STUDENT_DOES_NOT_HAVE_THE_COURSE.getDescription());
         courseEntity.getStudentEntities().remove(studentEntity);
         studentEntity.getCourses().remove(courseEntity);
 
@@ -117,7 +121,8 @@ public class CourseService {
     public void removeProfessor(int codeCourse) {
         CourseEntity courseEntity = findByCode(codeCourse);
         if (courseEntity.getProfessorEntity() == null)
-            throw new NotFoundException("The professor is not set for this course.");
+//            throw new NotFoundException("The professor is not set for this course.");
+            throw new NotFoundException(Messages.PROFESSOR_DOES_NOT_HABE_THIS_COURSE.getDescription());
 
         ProfessorEntity professorEntity = courseEntity.getProfessorEntity();
         courseEntity.setProfessorEntity(null);
@@ -131,7 +136,8 @@ public class CourseService {
     public ProfessorEntity getProfessor(int codeCourse) {
         CourseEntity courseEntity = findByCode(codeCourse);
         if (courseEntity.getProfessorEntity() == null)
-            throw new NotFoundException("The professor is not set for this course.");
+//            throw new NotFoundException("The professor is not set for this course.");
+            throw new NotFoundException(Messages.PROFESSOR_DOES_NOT_HABE_THIS_COURSE.getDescription());
         return courseEntity.getProfessorEntity();
     }
 }
