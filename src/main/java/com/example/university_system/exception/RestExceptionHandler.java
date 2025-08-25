@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 
 @ControllerAdvice
@@ -22,6 +23,13 @@ public class RestExceptionHandler {
     @ExceptionHandler({ConflictException.class})
     protected ResponseEntity<Object> handleConflictException(ConflictException exception) {
         ApiException apiException = new ApiException(CONFLICT
+                , exception.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(apiException, apiException.getStatus());
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException exception) {
+        ApiException apiException = new ApiException(BAD_REQUEST
                 , exception.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(apiException, apiException.getStatus());
     }
