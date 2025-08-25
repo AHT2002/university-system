@@ -26,6 +26,14 @@ public enum Messages {
     STUDENT_AVAILABLE_BY_STDNUMBER("دانشجو با شماره دانشجویی داده شده در سیستم موجود است"),
     // Courses
     COURSES_AVAILABLE_BY_CODE("درس با کد داده شده در سیستم موجود است"),
+
+
+    // IllegalArgumentException
+    // NationalID validator
+    NATIONAL_ID_SHOULD_NOT_NULL("کد ملی نمی‌تواند بدون مقدار باشد"),
+    NATIONAL_ID_REGEX_NOT_FIT("کد ملی باید دقیقاً ۱۰ رقم باشد و فقط شامل ارقام باشد"),
+    NATIONAL_ID_ALL_DIGITS_CANNOT_BE_SAME("کد ملی نامعتبر است، همه ارقام نمی‌توانند یکسان باشند"),
+    NATIONAL_ID_NOT_VALID("کد ملی نامعتبر است، طبق الگوریتم صحت کد ملی معتبر نیست")
     ;
 
 
