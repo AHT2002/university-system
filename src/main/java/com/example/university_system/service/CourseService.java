@@ -1,4 +1,4 @@
-package com.example.university_system.Service;
+package com.example.university_system.service;
 
 
 import com.example.university_system.entity.CourseEntity;

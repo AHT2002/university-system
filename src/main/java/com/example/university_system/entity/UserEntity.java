@@ -41,11 +41,11 @@ public class UserEntity extends BaseEntity {
     private String password;
 
 
-    @Transient
-    private transient NationalIdValidator nationalIdValidator;
-
-    public void setNationalId(String nationalId) {
-        nationalIdValidator.validateNationalId(nationalId);
-        this.nationalCode = nationalId;
-    }
+//    @Transient
+//    private transient NationalIdValidator nationalIdValidator;
+//
+//    public void setNationalId(String nationalId) {
+//        nationalIdValidator.validateNationalId(nationalId);
+//        this.nationalCode = nationalId;
+//    }
 }

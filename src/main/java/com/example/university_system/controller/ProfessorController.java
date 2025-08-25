@@ -1,6 +1,6 @@
 package com.example.university_system.controller;
 
-import com.example.university_system.Service.ProfessorService;
+import com.example.university_system.service.ProfessorService;
 import com.example.university_system.dto.course.ViewCourseDTO;
 import com.example.university_system.dto.professor.AddProfessorDTO;
 import com.example.university_system.dto.professor.UpdateProfessorDTO;
