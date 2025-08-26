@@ -1,0 +1,89 @@
+package com.example.university_system.service;
+
+import com.example.university_system.enums.Messages;
+import com.example.university_system.exception.ConflictException;
+import com.example.university_system.exception.NotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+public abstract class BaseService<T, ID> {
+
+    protected abstract JpaRepository<T, ID> getRepository();
+    protected abstract Messages getNotFoundMessage();
+    public abstract String getCacheName();
+    public abstract String getAllCacheName();
+    protected abstract void updateEntity(T entity, T existingEntity);
+
+    @CacheEvict(cacheNames = {"cacheName", "allCacheName"}, allEntries = true, cacheResolver = "cacheResolver")
+    public T save(T entity) {
+        try {
+            return getRepository().save(entity);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("نقض یکپارچگی داده‌ها: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("خطا در ذخیره موجودیت: " + e.getMessage(), e);
+        }
+    }
+
+    public T update(T entity, ID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("شناسه نمی‌تواند null باشد");
+        }
+        T existingEntity = findById(id);
+        updateEntity(entity, existingEntity);
+        return save(existingEntity);
+    }
+
+    @Cacheable(cacheNames = "cacheName", key = "#id", unless = "#result == null", cacheResolver = "cacheResolver")
+    public T findById(ID id) {
+        Optional<T> optional = getRepository().findById(id);
+        if (optional.isEmpty()) {
+            throw new NotFoundException(getNotFoundMessage().getDescription());
+        }
+        return optional.get();
+    }
+
+    @Cacheable(cacheNames = "allCacheName", unless = "#result.isEmpty()", cacheResolver = "cacheResolver")
+    public List<T> findAll() {
+        return getRepository().findAll();
+    }
+
+    @CacheEvict(cacheNames = {"cacheName", "allCacheName"}, allEntries = true, cacheResolver = "cacheResolver")
+    public void deleteById(ID id) {
+        findById(id);
+        getRepository().deleteById(id);
+    }
+
+    @CacheEvict(cacheNames = {"cacheName", "allCacheName"}, allEntries = true, cacheResolver = "cacheResolver")
+    public void deleteAll() {
+        getRepository().deleteAll();
+    }
+
+    public boolean existsById(ID id) {
+        return getRepository().existsById(id);
+    }
+
+    public long count() {
+        return getRepository().count();
+    }
+
+    protected <V> void checkUniqueField(V value, Function<V, Optional<T>> finder, Messages conflictMessage) {
+        if (value != null && finder.apply(value).isPresent()) {
+            throw new ConflictException(conflictMessage.getDescription());
+        }
+    }
+
+    protected <V> T findByField(V value, Function<V, Optional<T>> finder) {
+        Optional<T> optional = finder.apply(value);
+        if (optional.isEmpty()) {
+            throw new NotFoundException(getNotFoundMessage().getDescription());
+        }
+        return optional.get();
+    }
+}
