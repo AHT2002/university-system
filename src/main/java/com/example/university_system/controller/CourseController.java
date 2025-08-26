@@ -1,7 +1,11 @@
 package com.example.university_system.controller;
 
 
-import com.example.university_system.service.CourseService;
+// <<<<<<< refactor/service-layer-refactor
+import com.example.university_system.service.impl.CourseService;
+// =======
+// import com.example.university_system.service.CourseService;
+// >>>>>>> main
 import com.example.university_system.dto.course.AddCourseDTO;
 import com.example.university_system.dto.course.UpdateCourseDTO;
 import com.example.university_system.dto.course.ViewCourseDTO;
@@ -36,12 +40,20 @@ public class CourseController {
         return courseMapper.toViewDto(courseEntity);
     }
 
+//    @PutMapping("/update")
+//    @ResponseStatus(HttpStatus.OK)
+//    public ViewCourseDTO update(@RequestBody UpdateCourseDTO updateCourseDTO) {
+//        CourseEntity courseEntity = courseService.update(courseMapper.toEntity(updateCourseDTO));
+//        return courseMapper.toViewDto(courseEntity);
+//    }
+
     @PutMapping("/update")
     @ResponseStatus(HttpStatus.OK)
     public ViewCourseDTO update(@RequestBody UpdateCourseDTO updateCourseDTO) {
-        CourseEntity courseEntity = courseService.update(courseMapper.toEntity(updateCourseDTO));
-        return courseMapper.toViewDto(courseEntity);
+        CourseEntity courseEntity = courseMapper.toEntity(updateCourseDTO);
+        return courseMapper.toViewDto(courseService.update(courseEntity, updateCourseDTO.getId()));
     }
+
 
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

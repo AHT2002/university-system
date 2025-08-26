@@ -15,9 +15,18 @@ public class CaffeineCacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager manager = new CaffeineCacheManager("allCourse", "course");
+        CaffeineCacheManager manager = new CaffeineCacheManager(
+                "student", "allStudent",
+                "course", "allCourse", "courseStudents", "courseProfessor",
+                "professor", "allProfessor"
+        );
         manager.setCaffeine(caffeineCacheBuilder());
         return manager;
+    }
+
+    @Bean
+    public DynamicCacheResolver cacheResolver(CacheManager cacheManager) {
+        return new DynamicCacheResolver(cacheManager);
     }
 
     public Caffeine<Object, Object> caffeineCacheBuilder() {
