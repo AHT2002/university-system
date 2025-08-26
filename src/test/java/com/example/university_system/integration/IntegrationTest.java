@@ -1,8 +1,13 @@
 //package com.example.university_system.integration;
 //
 //
+// <<<<<<< refactor/service-layer-refactor
 //import com.example.university_system.service.impl.CourseService;
 //import com.example.university_system.Service.StudentService;
+// =======
+//import com.example.university_system.service.CourseService;
+//import com.example.university_system.service.StudentService;
+// >>>>>>> main
 //import com.example.university_system.dto.course.AddCourseDTO;
 //import com.example.university_system.entity.CourseEntity;
 //import com.example.university_system.entity.StudentEntity;

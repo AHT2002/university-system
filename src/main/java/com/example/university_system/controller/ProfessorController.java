@@ -1,6 +1,10 @@
 package com.example.university_system.controller;
 
+// <<<<<<< refactor/service-layer-refactor
 import com.example.university_system.service.impl.ProfessorService;
+// =======
+// import com.example.university_system.service.ProfessorService;
+// >>>>>>> main
 import com.example.university_system.dto.course.ViewCourseDTO;
 import com.example.university_system.dto.professor.AddProfessorDTO;
 import com.example.university_system.dto.professor.UpdateProfessorDTO;
