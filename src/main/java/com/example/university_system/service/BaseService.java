@@ -1,5 +1,6 @@
 package com.example.university_system.service;
 
+import com.example.university_system.entity.BaseEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.exception.ConflictException;
 import com.example.university_system.exception.NotFoundException;
@@ -9,20 +10,27 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public abstract class BaseService<T, ID> {
+public abstract class BaseService<T extends BaseEntity, ID> {
 
     protected abstract JpaRepository<T, ID> getRepository();
     protected abstract Messages getNotFoundMessage();
     public abstract String getCacheName();
     public abstract String getAllCacheName();
     protected abstract void updateEntity(T entity, T existingEntity);
+    protected abstract Map<Messages, Function<Object, Optional<T>>> getUniqueFieldCheckers();
+    protected abstract Object getFieldValue(T entity, Messages message);
+
 
     @CacheEvict(cacheNames = {"cacheName", "allCacheName"}, allEntries = true, cacheResolver = "cacheResolver")
     public T save(T entity) {
         try {
+            if (entity.getId() == null) {
+                checkUniqueFields(entity);
+            }
             return getRepository().save(entity);
         } catch (DataIntegrityViolationException e) {
             throw new ConflictException("نقض یکپارچگی داده‌ها: " + e.getMessage());
@@ -30,6 +38,19 @@ public abstract class BaseService<T, ID> {
             throw new RuntimeException("خطا در ذخیره موجودیت: " + e.getMessage(), e);
         }
     }
+
+    private void checkUniqueFields(T entity) {
+        Map<Messages, Function<Object, Optional<T>>> checkers = getUniqueFieldCheckers();
+        checkers.forEach((message, checker) -> {
+            Object value = getFieldValue(entity, message);
+            if (value != null && checker.apply(value).isPresent()) {
+                throw new ConflictException(message.getDescription());
+            }
+        });
+    }
+
+
+
 
     public T update(T entity, ID id) {
         if (id == null) {

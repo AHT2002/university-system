@@ -13,7 +13,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
@@ -43,20 +47,27 @@ public class CourseService extends BaseService<CourseEntity, Long> {
         return "allCourse";
     }
 
+
+    @Override
+    protected Map<Messages, Function<Object, Optional<CourseEntity>>> getUniqueFieldCheckers() {
+        Map<Messages, Function<Object, Optional<CourseEntity>>> checkers = new HashMap<>();
+        checkers.put(Messages.COURSES_AVAILABLE_BY_CODE, code -> courseRepository.findByCode((int) code));
+        return checkers;
+    }
+
+    @Override
+    protected Object getFieldValue(CourseEntity entity, Messages message) {
+        if (message == Messages.COURSES_AVAILABLE_BY_CODE) {
+            return entity.getCode();
+        }
+        return null;
+    }
+
+
     @Override
     protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
         existingEntity.setTitle(entity.getTitle());
         existingEntity.setUnits(entity.getUnits());
-    }
-
-    @Override
-    public CourseEntity save(CourseEntity entity) {
-        checkUniqueFields(entity);
-        return super.save(entity);
-    }
-
-    private void checkUniqueFields(CourseEntity entity) {
-        checkUniqueField(entity.getCode(), courseRepository::findByCode, Messages.COURSES_AVAILABLE_BY_CODE);
     }
 
     public CourseEntity findByCode(int code) {
@@ -73,9 +84,9 @@ public class CourseService extends BaseService<CourseEntity, Long> {
         }
 
         courseEntity.getStudentEntities().add(studentEntity);
-        studentEntity.getCourses().add(courseEntity);
+//        studentEntity.getCourses().add(courseEntity);
 
-        studentService.update(studentEntity, studentEntity.getId());
+//        studentService.update(studentEntity, studentEntity.getId());
         super.save(courseEntity);
     }
 
@@ -89,30 +100,33 @@ public class CourseService extends BaseService<CourseEntity, Long> {
         }
 
         courseEntity.getStudentEntities().remove(studentEntity);
-        studentEntity.getCourses().remove(courseEntity);
+//        studentEntity.getCourses().remove(courseEntity);
 
-        studentService.update(studentEntity, studentEntity.getId());
+//        studentService.update(studentEntity, studentEntity.getId());
         super.save(courseEntity);
     }
 
     @Cacheable(cacheNames = "courseStudents", key = "#codeCourse", cacheResolver = "cacheResolver")
     public List<StudentEntity> listStudents(int codeCourse) {
-        return findByCode(codeCourse).getStudentEntities().stream().toList();
+//        return findByCode(codeCourse).getStudentEntities().stream().toList();
+        List<StudentEntity> students = findByCode(codeCourse).getStudentEntities().stream().toList();
+        if (students.isEmpty()) {
+            throw new NotFoundException(Messages.COURSE_DOES_NOT_HAVE_ANY_STUDENT.getDescription());
+        }
+        return students;
     }
 
     @CacheEvict(cacheNames = {"course", "allCourse", "courseStudents", "courseProfessor"}, allEntries = true, cacheResolver = "cacheResolver")
-    public void addProfessor(int codeCourse, int codeProfessor) {
+    public void assignProfessor(int codeCourse, int codeProfessor) {
         ProfessorEntity professorEntity = professorService.findByCode(codeProfessor);
         CourseEntity courseEntity = findByCode(codeCourse);
 
         if (courseEntity.getProfessorEntity() != null) {
-            throw new ConflictException("این درس قبلاً یک استاد دارد.");
+            ProfessorEntity oldProfessor = courseEntity.getProfessorEntity();
+            oldProfessor.getCourses().remove(courseEntity);
         }
 
         courseEntity.setProfessorEntity(professorEntity);
-        professorEntity.getCourses().add(courseEntity);
-
-        professorService.update(professorEntity, professorEntity.getId());
         super.save(courseEntity);
     }
 
@@ -120,14 +134,10 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     public void removeProfessor(int codeCourse) {
         CourseEntity courseEntity = findByCode(codeCourse);
         if (courseEntity.getProfessorEntity() == null) {
-            throw new NotFoundException(Messages.PROFESSOR_DOES_NOT_HABE_THIS_COURSE.getDescription());
+            throw new NotFoundException(Messages.COURSE_DOES_NOT_HAVE_PROFESSOR.getDescription());
         }
 
-        ProfessorEntity professorEntity = courseEntity.getProfessorEntity();
         courseEntity.setProfessorEntity(null);
-        professorEntity.getCourses().remove(courseEntity);
-
-        professorService.update(professorEntity, professorEntity.getId());
         super.save(courseEntity);
     }
 
@@ -135,7 +145,7 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     public ProfessorEntity getProfessor(int codeCourse) {
         CourseEntity courseEntity = findByCode(codeCourse);
         if (courseEntity.getProfessorEntity() == null) {
-            throw new NotFoundException(Messages.PROFESSOR_DOES_NOT_HABE_THIS_COURSE.getDescription());
+            throw new NotFoundException(Messages.COURSE_DOES_NOT_HAVE_PROFESSOR.getDescription());
         }
         return courseEntity.getProfessorEntity();
     }
