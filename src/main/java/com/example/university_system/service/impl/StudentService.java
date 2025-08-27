@@ -8,7 +8,11 @@ import com.example.university_system.service.BaseService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +40,31 @@ public class StudentService extends BaseService<StudentEntity, Long> {
         return "allStudent";
     }
 
+
+    @Override
+    protected Map<Messages, Function<Object, Optional<StudentEntity>>> getUniqueFieldCheckers() {
+        Map<Messages, Function<Object, Optional<StudentEntity>>> checkers = new HashMap<>();
+        checkers.put(Messages.STUDENT_AVAILABLE_BY_NATIONALCODE, nationalCode -> studentRepository.findByNationalCode((String) nationalCode));
+        checkers.put(Messages.STUDENT_AVAILABLE_BY_USERNAME, username -> studentRepository.findByUsername((String) username));
+        checkers.put(Messages.STUDENT_AVAILABLE_BY_STDNUMBER, stdNumber -> studentRepository.findByStdNumber((Long) stdNumber));
+        return checkers;
+    }
+
+    @Override
+    protected Object getFieldValue(StudentEntity entity, Messages message) {
+        switch (message) {
+            case STUDENT_AVAILABLE_BY_NATIONALCODE:
+                return entity.getNationalCode();
+            case STUDENT_AVAILABLE_BY_USERNAME:
+                return entity.getUsername();
+            case STUDENT_AVAILABLE_BY_STDNUMBER:
+                return entity.getStdNumber();
+            default:
+                return null;
+        }
+    }
+
+
     @Override
     protected void updateEntity(StudentEntity entity, StudentEntity existingEntity) {
         existingEntity.setName(entity.getName());
@@ -44,18 +73,6 @@ public class StudentService extends BaseService<StudentEntity, Long> {
         existingEntity.setBirthDay(entity.getBirthDay());
         existingEntity.setPassword(entity.getPassword());
         existingEntity.setAcademicLevel(entity.getAcademicLevel());
-    }
-
-    @Override
-    public StudentEntity save(StudentEntity entity) {
-        checkUniqueFields(entity);
-        return super.save(entity);
-    }
-
-    private void checkUniqueFields(StudentEntity entity) {
-        checkUniqueField(entity.getNationalCode(), studentRepository::findByNationalCode, Messages.STUDENT_AVAILABLE_BY_NATIONALCODE);
-        checkUniqueField(entity.getUsername(), studentRepository::findByUsername, Messages.STUDENT_AVAILABLE_BY_USERNAME);
-        checkUniqueField(entity.getStdNumber(), studentRepository::findByStdNumber, Messages.STUDENT_AVAILABLE_BY_STDNUMBER);
     }
 
     public StudentEntity findByStdNumber(Long stdNumber) {

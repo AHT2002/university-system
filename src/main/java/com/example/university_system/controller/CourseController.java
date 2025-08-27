@@ -82,10 +82,10 @@ public class CourseController {
         courseService.removeStudent(codeCourse, stdNumber);
     }
 
-    @PostMapping("/{codeCourse}/professor/add/{codeProfessor}")
+    @PostMapping("/{codeCourse}/professor/assign/{codeProfessor}")
     @ResponseStatus(HttpStatus.OK)
-    public void addProfessor(@PathVariable int codeCourse, @PathVariable int codeProfessor) {
-        courseService.addProfessor(codeCourse, codeProfessor);
+    public void assignProfessor(@PathVariable int codeCourse, @PathVariable int codeProfessor) {
+        courseService.assignProfessor(codeCourse, codeProfessor);
     }
 
     @DeleteMapping("/{codeCourse}/professor/remove")
