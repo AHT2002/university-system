@@ -1,5 +1,6 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.entity.LessonEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.ProfessorEntity;
@@ -26,6 +27,7 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     private final CourseRepository courseRepository;
     private final StudentService studentService;
     private final ProfessorService professorService;
+    private final LessonService lessonService;
 
     @Override
     protected CourseRepository getRepository() {
@@ -64,11 +66,26 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     }
 
 
+//    @Override
+//    protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
+//        existingEntity.setTitle(entity.getTitle());
+//        existingEntity.setUnits(entity.getUnits());
+//    }
+
     @Override
     protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
-        existingEntity.setTitle(entity.getTitle());
-        existingEntity.setUnits(entity.getUnits());
+        existingEntity.setSemester(entity.getSemester());
+        // code تغییر نمی‌کنه
+        if (entity.getLessonEntity() != null) {
+            LessonEntity lesson = lessonService.findByLessonCode(entity.getLessonEntity().getLessonCode());
+            existingEntity.setLessonEntity(lesson);
+        }
+        if (entity.getProfessorEntity() != null) {
+            ProfessorEntity professor = professorService.findByCode(entity.getProfessorEntity().getCode());
+            existingEntity.setProfessorEntity(professor);
+        }
     }
+
 
     public CourseEntity findByCode(int code) {
         return findByField(code, courseRepository::findByCode);
@@ -148,5 +165,13 @@ public class CourseService extends BaseService<CourseEntity, Long> {
             throw new NotFoundException(Messages.COURSE_DOES_NOT_HAVE_PROFESSOR.getDescription());
         }
         return courseEntity.getProfessorEntity();
+    }
+
+    @CacheEvict(cacheNames = {"course", "allCourse", "courseStudents", "courseProfessor"}, allEntries = true)
+    public void setLesson(int codeCourse, int lessonCode) {
+        CourseEntity courseEntity = findByCode(codeCourse);
+        LessonEntity lessonEntity = lessonService.findByLessonCode(lessonCode);
+        courseEntity.setLessonEntity(lessonEntity);
+        super.save(courseEntity);
     }
 }

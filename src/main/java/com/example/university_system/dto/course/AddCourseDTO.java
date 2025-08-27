@@ -2,6 +2,7 @@ package com.example.university_system.dto.course;
 
 import com.example.university_system.dto.base.AddBaseDTO;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,12 +11,12 @@ import lombok.Setter;
 @Setter
 public class AddCourseDTO extends AddBaseDTO {
 
-    @Positive
+    @NotNull
     private int code;
 
-    @NotBlank
-    private String title;
+    @NotNull
+    private int semester;
 
-    @Positive
-    private int units;
+    @NotNull
+    private int lessonCode;
 }
