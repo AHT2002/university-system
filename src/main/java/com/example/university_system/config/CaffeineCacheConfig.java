@@ -18,7 +18,8 @@ public class CaffeineCacheConfig {
         CaffeineCacheManager manager = new CaffeineCacheManager(
                 "student", "allStudent",
                 "course", "allCourse", "courseStudents", "courseProfessor",
-                "professor", "allProfessor"
+                "professor", "allProfessor", "department", "allDepartment",
+                "lesson", "allLesson"
         );
         manager.setCaffeine(caffeineCacheBuilder());
         return manager;

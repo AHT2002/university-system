@@ -18,10 +18,20 @@ public class CourseEntity extends BaseEntity {
     private int code;
 
     @Column(nullable = false)
-    private String title;
+    private int semester;
 
-    @Column(nullable = false)
-    private int units;
+//    @Column(unique = true, nullable = false)
+//    private int code;
+//
+//    @Column(nullable = false)
+//    private String title;
+//
+//    @Column(nullable = false)
+//    private int units;
+
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
+    private LessonEntity lessonEntity ;
 
     @ManyToOne
     @JoinColumn(name = "professor_id")

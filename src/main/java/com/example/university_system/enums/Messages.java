@@ -15,6 +15,10 @@ public enum Messages {
     // Professor
     PROFESSOR_NOT_FOUND("استاد مورد نظر پیدا نشد"),
     PROFESSOR_DOES_NOT_HAVE_THIS_COURSE("این درس توسط این استاد ارائه نشده"),
+    // Department
+    DEPARTMENT_NOT_FOUND("دانشکده مدنظر یافت نشد"),
+    // Lesson
+    LESSON_NOT_FOUND("عنوان درسی مدنظر یافت نشد"),
 
 
     // Conflict Exception messages
@@ -28,6 +32,10 @@ public enum Messages {
     STUDENT_AVAILABLE_BY_STDNUMBER("دانشجو با شماره دانشجویی داده شده در سیستم موجود است"),
     // Courses
     COURSES_AVAILABLE_BY_CODE("درس با کد داده شده در سیستم موجود است"),
+    // Department
+    DEPARTMENT_NAME_ALREADY_EXISTS("این دانشکده در سیستم موجود است"),
+    // Lesson
+    LESSON_CODE_ALREADY_EXISTS("عنوان درسی با کد داده شده در سیستم موجود است"),
 
 
 

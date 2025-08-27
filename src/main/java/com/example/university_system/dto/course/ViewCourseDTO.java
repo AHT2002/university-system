@@ -10,8 +10,10 @@ import java.util.List;
 @Setter
 public class ViewCourseDTO extends ViewBaseDTO {
     private int code;
-    private String title;
-    private int units;
-    private String nameProfessor;
-    private List<Long> studentNumbers;
+    private int semester;
+    private String lessonTitle;
+    private int lessonUnits;
+    private String departmentName;
+    private String professorName;
+    List<Long> studentNumbers;
 }
