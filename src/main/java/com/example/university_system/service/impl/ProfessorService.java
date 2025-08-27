@@ -44,7 +44,6 @@ public class ProfessorService extends BaseService<ProfessorEntity, Long> {
         existingEntity.setBirthDay(entity.getBirthDay());
         existingEntity.setPassword(entity.getPassword());
         existingEntity.setAcademicRank(entity.getAcademicRank());
-        // nationalCode, username, code تغییر نمی‌کنن
     }
 
     @Override

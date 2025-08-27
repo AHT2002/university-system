@@ -44,7 +44,6 @@ public class StudentService extends BaseService<StudentEntity, Long> {
         existingEntity.setBirthDay(entity.getBirthDay());
         existingEntity.setPassword(entity.getPassword());
         existingEntity.setAcademicLevel(entity.getAcademicLevel());
-        // nationalCode, username, stdNumber تغییر نمی‌کنن
     }
 
     @Override

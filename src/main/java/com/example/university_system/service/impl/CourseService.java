@@ -47,7 +47,6 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
         existingEntity.setTitle(entity.getTitle());
         existingEntity.setUnits(entity.getUnits());
-        // code تغییر نمی‌کنه
     }
 
     @Override

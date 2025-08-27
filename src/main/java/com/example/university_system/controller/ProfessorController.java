@@ -1,10 +1,7 @@
 package com.example.university_system.controller;
 
-// <<<<<<< refactor/service-layer-refactor
 import com.example.university_system.service.impl.ProfessorService;
-// =======
-// import com.example.university_system.service.ProfessorService;
-// >>>>>>> main
+
 import com.example.university_system.dto.course.ViewCourseDTO;
 import com.example.university_system.dto.professor.AddProfessorDTO;
 import com.example.university_system.dto.professor.UpdateProfessorDTO;
@@ -34,12 +31,6 @@ public class ProfessorController {
         return professorMapper.toViewDto(professorEntity);
     }
 
-//    @PutMapping("/update")
-//    @ResponseStatus(HttpStatus.OK)
-//    public ViewProfessorDTO update(@RequestBody UpdateProfessorDTO updateProfessorDTO) {
-//        ProfessorEntity professorEntity = professorService.save(professorMapper.toEntity(updateProfessorDTO));
-//        return professorMapper.toViewDto(professorEntity);
-//    }
 
     @PutMapping("/update")
     @ResponseStatus(HttpStatus.OK)
