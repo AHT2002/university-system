@@ -15,30 +15,29 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class StudentMapper {
+public class StudentMapper implements BaseMapper<StudentEntity, AddStudentDTO, UpdateStudentDTO, ViewStudentDTO>{
 
     private final ModelMapper mapper;
 
-    public StudentEntity toEntity(AddStudentDTO addStudentDTO) {
+    @Override
+    public StudentEntity toAddEntity(AddStudentDTO addStudentDTO) {
         StudentEntity studentEntity = mapper.map(addStudentDTO, StudentEntity.class);
-
         studentEntity.setGender(addStudentDTO.getGenderString()
                 .equals("MALE") ? Gender.MALE : Gender.FEMALE);
         studentEntity.setBirthDay(new Date(addStudentDTO.getBirthDayTimeStamp()));
-
         return studentEntity;
     }
 
-    public StudentEntity toEntity(UpdateStudentDTO updateStudentDTO) {
+    @Override
+    public StudentEntity toUpdateEntity(UpdateStudentDTO updateStudentDTO) {
         StudentEntity studentEntity = mapper.map(updateStudentDTO, StudentEntity.class);
-
         studentEntity.setGender(updateStudentDTO.getGenderString()
                 .equals("MALE") ? Gender.MALE : Gender.FEMALE);
         studentEntity.setBirthDay(new Date(updateStudentDTO.getBirthDayTimeStamp()));
-
         return studentEntity;
     }
 
+    @Override
     public ViewStudentDTO toViewDto(StudentEntity studentEntity) {
         ViewStudentDTO viewStudentDTO = mapper.map(studentEntity, ViewStudentDTO.class);
 
@@ -54,6 +53,7 @@ public class StudentMapper {
         return viewStudentDTO;
     }
 
+    @Override
     public List<ViewStudentDTO> toListViewDTO(List<StudentEntity> studentEntityList) {
         return studentEntityList.stream().map(this::toViewDto).toList();
     }

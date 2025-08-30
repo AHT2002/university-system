@@ -15,70 +15,41 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class CourseMapper {
+public class CourseMapper implements BaseMapper<CourseEntity, AddCourseDTO, UpdateCourseDTO, ViewCourseDTO>{
 
     private final ModelMapper mapper;
     private final LessonService lessonService;
 
-//    public CourseEntity toEntity(AddCourseDTO addCourseDTO) {
-//        return mapper.map(addCourseDTO, CourseEntity.class);
-//    }
-
-    public CourseEntity toEntity(AddCourseDTO addCourseDTO) {
+    @Override
+    public CourseEntity toAddEntity(AddCourseDTO addCourseDTO) {
         CourseEntity courseEntity = mapper.map(addCourseDTO, CourseEntity.class);
-        // مپینگ lessonCode به LessonEntity
         LessonEntity lesson = lessonService.findByLessonCode(addCourseDTO.getLessonCode());
         courseEntity.setLessonEntity(lesson);
         return courseEntity;
     }
 
-//    public CourseEntity toEntity(UpdateCourseDTO updateCourseDTO) {
-//        return mapper.map(updateCourseDTO, CourseEntity.class);
-//    }
-
-    public CourseEntity toEntity(UpdateCourseDTO updateCourseDTO) {
+    @Override
+    public CourseEntity toUpdateEntity(UpdateCourseDTO updateCourseDTO) {
         CourseEntity courseEntity = mapper.map(updateCourseDTO, CourseEntity.class);
-        // مپینگ lessonCode به LessonEntity
         LessonEntity lesson = lessonService.findByLessonCode(updateCourseDTO.getLessonCode());
         courseEntity.setLessonEntity(lesson);
         return courseEntity;
     }
 
-
-
-//    public ViewCourseDTO toViewDto(CourseEntity courseEntity) {
-//        ViewCourseDTO viewCourseDTO = mapper.map(courseEntity, ViewCourseDTO.class);
-//
-//        if (courseEntity.getProfessorEntity() != null) {
-//            String professor = courseEntity.getProfessorEntity().getName() + " " + courseEntity.getProfessorEntity().getFamily();
-//            viewCourseDTO.setNameProfessor(professor);
-//        }
-//
-//        List<Long> studentNumbers = courseEntity.getStudentEntities().stream()
-//                .map(StudentEntity::getStdNumber)
-//                .toList();
-//
-//        viewCourseDTO.setStudentNumbers(studentNumbers);
-//
-//        return viewCourseDTO;
-//    }
-
+    @Override
     public ViewCourseDTO toViewDto(CourseEntity courseEntity) {
         ViewCourseDTO viewCourseDTO = mapper.map(courseEntity, ViewCourseDTO.class);
 
-        // مپینگ دستی برای nameProfessor
         if (courseEntity.getProfessorEntity() != null) {
             String professor = courseEntity.getProfessorEntity().getName() + " " + courseEntity.getProfessorEntity().getFamily();
             viewCourseDTO.setProfessorName(professor);
         }
 
-        // مپینگ دستی برای studentNumbers
         List<Long> studentNumbers = courseEntity.getStudentEntities().stream()
                 .map(StudentEntity::getStdNumber)
                 .toList();
         viewCourseDTO.setStudentNumbers(studentNumbers);
 
-        // مپینگ دستی برای lessonTitle, lessonUnits, و departmentName
         if (courseEntity.getLessonEntity() != null) {
             viewCourseDTO.setLessonTitle(courseEntity.getLessonEntity().getTitle());
             viewCourseDTO.setLessonUnits(courseEntity.getLessonEntity().getUnits());
@@ -91,7 +62,7 @@ public class CourseMapper {
     }
 
 
-
+    @Override
     public List<ViewCourseDTO> toListViewDTO(List<CourseEntity> courseEntityList) {
         return courseEntityList.stream().map(this::toViewDto).toList();
     }
