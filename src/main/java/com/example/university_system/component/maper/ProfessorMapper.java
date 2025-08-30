@@ -15,32 +15,28 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class ProfessorMapper {
-
+public class ProfessorMapper implements BaseMapper<ProfessorEntity, AddProfessorDTO, UpdateProfessorDTO, ViewProfessorDTO>{
     private final ModelMapper mapper;
 
-    public ProfessorEntity toEntity(AddProfessorDTO addProfessorDTO) {
+    @Override
+    public ProfessorEntity toAddEntity(AddProfessorDTO addProfessorDTO) {
         ProfessorEntity professorEntity = mapper.map(addProfessorDTO, ProfessorEntity.class);
-
         professorEntity.setGender(addProfessorDTO.getGenderString()
                 .equals("MALE") ? Gender.MALE : Gender.FEMALE);
-
         professorEntity.setBirthDay(new Date(addProfessorDTO.getBirthDayTimeStamp()));
-
         return professorEntity;
     }
 
-    public ProfessorEntity toEntity(UpdateProfessorDTO updateProfessorDTO) {
+    @Override
+    public ProfessorEntity toUpdateEntity(UpdateProfessorDTO updateProfessorDTO) {
         ProfessorEntity professorEntity = mapper.map(updateProfessorDTO, ProfessorEntity.class);
-
         professorEntity.setGender(updateProfessorDTO.getGenderString()
                 .equals("MALE") ? Gender.MALE : Gender.FEMALE);
-
         professorEntity.setBirthDay(new Date(updateProfessorDTO.getBirthDayTimeStamp()));
-
         return professorEntity;
     }
 
+    @Override
     public ViewProfessorDTO toViewDto(ProfessorEntity professorEntity) {
         ViewProfessorDTO viewProfessorDTO = mapper.map(professorEntity, ViewProfessorDTO.class);
 
@@ -56,6 +52,7 @@ public class ProfessorMapper {
         return viewProfessorDTO;
     }
 
+    @Override
     public List<ViewProfessorDTO> toListViewDTO(List<ProfessorEntity> professorEntityList) {
         return professorEntityList.stream().map(this::toViewDto).toList();
     }

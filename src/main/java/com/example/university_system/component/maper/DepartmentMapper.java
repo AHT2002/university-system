@@ -12,22 +12,25 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class DepartmentMapper {
-
+public class DepartmentMapper implements BaseMapper<DepartmentEntity, AddDepartmentDTO, UpdateDepartmentDTO, ViewDepartmentDTO>{
     private final ModelMapper mapper;
 
-    public DepartmentEntity toEntity(AddDepartmentDTO addDepartmentDTO) {
+    @Override
+    public DepartmentEntity toAddEntity(AddDepartmentDTO addDepartmentDTO) {
         return mapper.map(addDepartmentDTO, DepartmentEntity.class);
     }
 
-    public DepartmentEntity toEntity(UpdateDepartmentDTO updateDepartmentDTO) {
+    @Override
+    public DepartmentEntity toUpdateEntity(UpdateDepartmentDTO updateDepartmentDTO) {
         return mapper.map(updateDepartmentDTO, DepartmentEntity.class);
     }
 
+    @Override
     public ViewDepartmentDTO toViewDto(DepartmentEntity departmentEntity) {
         return mapper.map(departmentEntity, ViewDepartmentDTO.class);
     }
 
+    @Override
     public List<ViewDepartmentDTO> toListViewDTO(List<DepartmentEntity> departmentEntityList) {
         return departmentEntityList.stream().map(this::toViewDto).toList();
     }
