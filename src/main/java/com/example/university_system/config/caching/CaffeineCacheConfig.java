@@ -1,4 +1,4 @@
-package com.example.university_system.config;
+package com.example.university_system.config.caching;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
