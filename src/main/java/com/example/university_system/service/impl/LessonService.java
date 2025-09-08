@@ -48,7 +48,7 @@ public class LessonService extends BaseService<LessonEntity, Long> {
     protected void updateEntity(LessonEntity entity, LessonEntity existingEntity) {
         existingEntity.setTitle(entity.getTitle());
         existingEntity.setUnits(entity.getUnits());
-        // lessonCode تغییر نمی‌کنه
+
         if (entity.getDepartmentEntity() != null) {
             DepartmentEntity department = departmentService.findByName(entity.getDepartmentEntity().getName());
             existingEntity.setDepartmentEntity(department);
@@ -70,13 +70,8 @@ public class LessonService extends BaseService<LessonEntity, Long> {
         return null;
     }
 
-    @Cacheable(cacheNames = "lesson", key = "#code")
     public LessonEntity findByLessonCode(int code) {
-        Optional<LessonEntity> lesson = lessonRepository.findByLessonCode(code);
-        if (lesson.isEmpty()) {
-            throw new NotFoundException(Messages.LESSON_NOT_FOUND.getDescription());
-        }
-        return lesson.get();
+        return findByField(code, lessonRepository :: findByLessonCode);
     }
 
     @CacheEvict(cacheNames = {"lesson", "allLesson"}, allEntries = true)
