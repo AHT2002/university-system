@@ -2,12 +2,9 @@ package com.example.university_system.service.impl;
 
 import com.example.university_system.entity.DepartmentEntity;
 import com.example.university_system.enums.Messages;
-import com.example.university_system.exception.NotFoundException;
 import com.example.university_system.repository.DepartmentRepository;
 import com.example.university_system.service.BaseService;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -62,12 +59,7 @@ public class DepartmentService extends BaseService<DepartmentEntity, Long> {
         return null;
     }
 
-    @Cacheable(cacheNames = "department", key = "#name")
     public DepartmentEntity findByName(String name) {
-        Optional<DepartmentEntity> department = departmentRepository.findByName(name);
-        if (department.isEmpty()) {
-            throw new NotFoundException(Messages.DEPARTMENT_NOT_FOUND.getDescription());
-        }
-        return department.get();
+        return findByField(name, departmentRepository::findByName);
     }
 }

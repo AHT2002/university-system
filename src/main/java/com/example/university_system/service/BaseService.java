@@ -25,7 +25,9 @@ public abstract class BaseService<T extends BaseEntity, ID> {
     protected abstract Object getFieldValue(T entity, Messages message);
 
 
-    @CacheEvict(cacheNames = {"#this.getCacheName()", "#this.getAllCacheName()"}, allEntries = true, cacheResolver = "cacheResolver")
+    @CacheEvict(cacheNames = {"#this.getCacheName()", "#this.getAllCacheName()"},
+            allEntries = true,
+            cacheResolver = "cacheResolver")
     public T save(T entity) {
         try {
             if (entity.getId() == null) {
@@ -61,7 +63,10 @@ public abstract class BaseService<T extends BaseEntity, ID> {
         return save(existingEntity);
     }
 
-    @Cacheable(cacheNames = "cacheName", key = "#id", unless = "#result == null", cacheResolver = "cacheResolver")
+    @Cacheable(cacheNames = "cacheName",
+            key = "#id",
+            unless = "#result == null",
+            cacheResolver = "cacheResolver")
     public T findById(ID id) {
         Optional<T> optional = getRepository().findById(id);
         if (optional.isEmpty()) {
@@ -70,18 +75,25 @@ public abstract class BaseService<T extends BaseEntity, ID> {
         return optional.get();
     }
 
-    @Cacheable(cacheNames = "allCacheName", unless = "#result.isEmpty()", cacheResolver = "cacheResolver")
+    @Cacheable(cacheNames = "allCacheName",
+            unless = "#result.isEmpty()",
+            cacheResolver = "cacheResolver")
     public List<T> findAll() {
         return getRepository().findAll();
     }
 
-    @CacheEvict(cacheNames = {"#this.getCacheName()", "#this.getAllCacheName()"}, allEntries = true, cacheResolver = "cacheResolver")
+    @CacheEvict(cacheNames = {"#this.getCacheName()",
+            "#this.getAllCacheName()"},
+            allEntries = true,
+            cacheResolver = "cacheResolver")
     public void deleteById(ID id) {
         findById(id);
         getRepository().deleteById(id);
     }
 
-    @CacheEvict(cacheNames = {"#this.getCacheName()", "#this.getAllCacheName()"}, allEntries = true, cacheResolver = "cacheResolver")
+    @CacheEvict(cacheNames = {"#this.getCacheName()", "#this.getAllCacheName()"},
+            allEntries = true,
+            cacheResolver = "cacheResolver")
     public void deleteAll() {
         getRepository().deleteAll();
     }
@@ -94,13 +106,12 @@ public abstract class BaseService<T extends BaseEntity, ID> {
         return getRepository().count();
     }
 
-//    protected <V> void checkUniqueField(V value, Function<V, Optional<T>> finder, Messages conflictMessage) {
-//        if (value != null && finder.apply(value).isPresent()) {
-//            throw new ConflictException(conflictMessage.getDescription());
-//        }
-//    }
 
-    protected <V> T findByField(V value, Function<V, Optional<T>> finder) {
+    @Cacheable(cacheNames = "#this.getCacheName()",
+            key = "#value.toString()",
+            unless = "#result == null",
+            cacheResolver = "cacheResolver")
+    public  <V> T findByField(V value, Function<V, Optional<T>> finder) {
         Optional<T> optional = finder.apply(value);
         if (optional.isEmpty()) {
             throw new NotFoundException(getNotFoundMessage().getDescription());
