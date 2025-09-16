@@ -4,6 +4,7 @@ import com.example.university_system.dto.student.AddStudentDTO;
 import com.example.university_system.dto.student.UpdateStudentDTO;
 import com.example.university_system.dto.student.ViewStudentDTO;
 import com.example.university_system.entity.CourseEntity;
+import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.entity.StudentEntity;
 import com.example.university_system.enums.Gender;
 import lombok.AllArgsConstructor;
@@ -41,13 +42,16 @@ public class StudentMapper implements BaseMapper<StudentEntity, AddStudentDTO, U
     public ViewStudentDTO toViewDto(StudentEntity studentEntity) {
         ViewStudentDTO viewStudentDTO = mapper.map(studentEntity, ViewStudentDTO.class);
 
-        List<Integer> coursesCode = studentEntity.getCourses().stream()
-                .map(CourseEntity::getCode)
+//        List<Integer> coursesCode = studentEntity.getCourses().stream()
+//                .map(CourseEntity::getCode)
+//                .toList();
+        List<Integer> coursesCode = studentEntity.getCourseGrades().stream()
+                .map(StudentCourseGradeEntity::getCourse)
+                .map(course -> course.getCode())
                 .toList();
+
         viewStudentDTO.setCourseCodes(coursesCode);
-
         viewStudentDTO.setBirthDayTimeStamp(studentEntity.getBirthDay().getTime());
-
         viewStudentDTO.setGenderString(studentEntity.getGender().name());
 
         return viewStudentDTO;

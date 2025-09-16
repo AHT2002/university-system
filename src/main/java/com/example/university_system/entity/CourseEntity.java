@@ -20,27 +20,14 @@ public class CourseEntity extends BaseEntity {
     @Column(nullable = false)
     private int semester;
 
-//    @Column(unique = true, nullable = false)
-//    private int code;
-//
-//    @Column(nullable = false)
-//    private String title;
-//
-//    @Column(nullable = false)
-//    private int units;
-
     @ManyToOne
-    @JoinColumn(name = "lesson_id")
+    @JoinColumn(name = "lesson_id", nullable = false)
     private LessonEntity lessonEntity ;
 
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private ProfessorEntity professorEntity;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "Course_Student",
-            joinColumns = {@JoinColumn(name = "course_id")},
-            inverseJoinColumns = {@JoinColumn(name = "student_id")}
-    )
-    private Set<StudentEntity> studentEntities = new HashSet<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<StudentCourseGradeEntity> studentGrades = new HashSet<>();
 }

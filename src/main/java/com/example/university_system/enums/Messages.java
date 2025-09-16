@@ -44,7 +44,12 @@ public enum Messages {
     NATIONAL_ID_SHOULD_NOT_NULL("کد ملی نمی‌تواند بدون مقدار باشد"),
     NATIONAL_ID_REGEX_NOT_FIT("کد ملی باید دقیقاً ۱۰ رقم باشد و فقط شامل ارقام باشد"),
     NATIONAL_ID_ALL_DIGITS_CANNOT_BE_SAME("کد ملی نامعتبر است، همه ارقام نمی‌توانند یکسان باشند"),
-    NATIONAL_ID_NOT_VALID("کد ملی نامعتبر است، طبق الگوریتم صحت‌سنجی، صحت کد ملی معتبر نیست")
+    NATIONAL_ID_NOT_VALID("کد ملی نامعتبر است، طبق الگوریتم صحت‌سنجی، صحت کد ملی معتبر نیست"),
+
+    // Grade
+    GRADE_NOT_FOUND("نمره یافت نشد"),
+    DUPLICATE_GRADE("جفت واحد درسی و دانشجوی تکراری"),
+    GRADE_NOT_VALID("نمره وارد شده نامعتبر است\nمقدار نمره باید بین ۰ تا ۲۰ باشد"),
     ;
 
 

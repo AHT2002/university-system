@@ -1,5 +1,6 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.StudentEntity;
@@ -81,6 +82,6 @@ public class StudentService extends BaseService<StudentEntity, Long> {
 
     public List<CourseEntity> listCoursesStudent(Long stdNumber) {
         StudentEntity student = findByStdNumber(stdNumber);
-        return student.getCourses().stream().toList();
+        return student.getCourseGrades().stream().map(StudentCourseGradeEntity::getCourse).toList();
     }
 }

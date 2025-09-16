@@ -1,7 +1,7 @@
 package com.example.university_system.service.impl;
 
-import com.example.university_system.entity.LessonEntity;
 import com.example.university_system.entity.DepartmentEntity;
+import com.example.university_system.entity.LessonEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.exception.ConflictException;
 import com.example.university_system.exception.NotFoundException;
