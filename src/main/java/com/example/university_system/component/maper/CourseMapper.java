@@ -5,7 +5,7 @@ import com.example.university_system.dto.course.UpdateCourseDTO;
 import com.example.university_system.dto.course.ViewCourseDTO;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.LessonEntity;
-import com.example.university_system.entity.StudentEntity;
+import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.service.impl.LessonService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -45,10 +45,12 @@ public class CourseMapper implements BaseMapper<CourseEntity, AddCourseDTO, Upda
             viewCourseDTO.setProfessorName(professor);
         }
 
-        List<Long> studentNumbers = courseEntity.getStudentEntities().stream()
-                .map(StudentEntity::getStdNumber)
+        List<Long> studentNumbers = courseEntity.getStudentGrades().stream()
+                .map(StudentCourseGradeEntity::getStudent)
+                .map(student -> student.getStdNumber())
                 .toList();
         viewCourseDTO.setStudentNumbers(studentNumbers);
+
 
         if (courseEntity.getLessonEntity() != null) {
             viewCourseDTO.setLessonTitle(courseEntity.getLessonEntity().getTitle());

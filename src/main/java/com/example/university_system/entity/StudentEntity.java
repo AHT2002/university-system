@@ -23,6 +23,6 @@ public class StudentEntity extends UserEntity {
     @Column(nullable = false)
     private AcademicLevel academicLevel;
 
-    @ManyToMany(mappedBy = "studentEntities")
-    private Set<CourseEntity> courses = new HashSet<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private Set<StudentCourseGradeEntity> courseGrades = new HashSet<>();
 }

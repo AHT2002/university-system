@@ -1,13 +1,12 @@
 package com.example.university_system.service.impl;
 
-import com.example.university_system.entity.LessonEntity;
+import com.example.university_system.entity.*;
+import com.example.university_system.enums.CourseGradeStatus;
 import com.example.university_system.enums.Messages;
-import com.example.university_system.entity.CourseEntity;
-import com.example.university_system.entity.ProfessorEntity;
-import com.example.university_system.entity.StudentEntity;
 import com.example.university_system.exception.ConflictException;
 import com.example.university_system.exception.NotFoundException;
 import com.example.university_system.repository.CourseRepository;
+import com.example.university_system.repository.StudentCourseGradeRepository;
 import com.example.university_system.service.BaseService;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +28,7 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     private final StudentService studentService;
     private final ProfessorService professorService;
     private final LessonService lessonService;
+    private final StudentCourseGradeRepository studentCourseGradeRepository;
 
     @Override
     protected CourseRepository getRepository() {
@@ -65,17 +66,9 @@ public class CourseService extends BaseService<CourseEntity, Long> {
         return null;
     }
 
-
-//    @Override
-//    protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
-//        existingEntity.setTitle(entity.getTitle());
-//        existingEntity.setUnits(entity.getUnits());
-//    }
-
     @Override
     protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
         existingEntity.setSemester(entity.getSemester());
-        // code تغییر نمی‌کنه
         if (entity.getLessonEntity() != null) {
             LessonEntity lesson = lessonService.findByLessonCode(entity.getLessonEntity().getLessonCode());
             existingEntity.setLessonEntity(lesson);
@@ -96,15 +89,17 @@ public class CourseService extends BaseService<CourseEntity, Long> {
         StudentEntity studentEntity = studentService.findByStdNumber(stdNumber);
         CourseEntity courseEntity = findByCode(codeCourse);
 
-        if (courseEntity.getStudentEntities().contains(studentEntity)) {
+        boolean alreadyEnrolled = studentCourseGradeRepository.findByStudentIdAndCourseId(studentEntity.getId(), courseEntity.getId()).isPresent();
+        if (alreadyEnrolled) {
             throw new ConflictException("دانشجو قبلاً به این درس اضافه شده است.");
         }
 
-        courseEntity.getStudentEntities().add(studentEntity);
-//        studentEntity.getCourses().add(courseEntity);
-
-//        studentService.update(studentEntity, studentEntity.getId());
-        super.save(courseEntity);
+        StudentCourseGradeEntity gradeEntity = new StudentCourseGradeEntity();
+        gradeEntity.setStudent(studentEntity);
+        gradeEntity.setCourse(courseEntity);
+        gradeEntity.setStatus(CourseGradeStatus.IN_PROGRESS);
+        gradeEntity.setGrade(null);
+        studentCourseGradeRepository.save(gradeEntity);
     }
 
     @CacheEvict(cacheNames = {"course", "allCourse", "courseStudents", "courseProfessor"}, allEntries = true, cacheResolver = "cacheResolver")
@@ -112,26 +107,32 @@ public class CourseService extends BaseService<CourseEntity, Long> {
         StudentEntity studentEntity = studentService.findByStdNumber(stdNumber);
         CourseEntity courseEntity = findByCode(codeCourse);
 
-        if (!courseEntity.getStudentEntities().contains(studentEntity)) {
+        boolean alreadyEnrolled = studentCourseGradeRepository.findByStudentIdAndCourseId(studentEntity.getId(), courseEntity.getId()).isPresent();
+        if (!alreadyEnrolled) {
             throw new NotFoundException(Messages.STUDENT_DOES_NOT_HAVE_THE_COURSE.getDescription());
         }
 
-        courseEntity.getStudentEntities().remove(studentEntity);
-//        studentEntity.getCourses().remove(courseEntity);
-
-//        studentService.update(studentEntity, studentEntity.getId());
-        super.save(courseEntity);
+        studentCourseGradeRepository.findByStudentIdAndCourseId(studentEntity.getId(), courseEntity.getId())
+                .ifPresent(studentCourseGradeRepository::delete);
     }
+
 
     @Cacheable(cacheNames = "courseStudents", key = "#codeCourse", cacheResolver = "cacheResolver")
     public List<StudentEntity> listStudents(int codeCourse) {
-//        return findByCode(codeCourse).getStudentEntities().stream().toList();
-        List<StudentEntity> students = findByCode(codeCourse).getStudentEntities().stream().toList();
+        CourseEntity courseEntity = findByCode(codeCourse);
+
+        List<StudentEntity> students = studentCourseGradeRepository.findByCourseId(courseEntity.getId())
+                .stream()
+                .map(StudentCourseGradeEntity::getStudent)
+                .collect(Collectors.toList());
+
         if (students.isEmpty()) {
             throw new NotFoundException(Messages.COURSE_DOES_NOT_HAVE_ANY_STUDENT.getDescription());
         }
+
         return students;
     }
+
 
     @CacheEvict(cacheNames = {"course", "allCourse", "courseStudents", "courseProfessor"}, allEntries = true, cacheResolver = "cacheResolver")
     public void assignProfessor(int codeCourse, int codeProfessor) {
