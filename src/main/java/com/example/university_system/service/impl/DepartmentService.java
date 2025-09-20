@@ -1,11 +1,13 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.dto.department.UpdateDepartmentDTO;
 import com.example.university_system.entity.DepartmentEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.repository.DepartmentRepository;
 import com.example.university_system.service.BaseService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.university_system.component.CheckRequestsInputStringParameter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,9 +16,10 @@ import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
-public class DepartmentService extends BaseService<DepartmentEntity, Long> {
+public class DepartmentService extends BaseService<DepartmentEntity, Long, UpdateDepartmentDTO> {
 
     private final DepartmentRepository departmentRepository;
+    private final CheckRequestsInputStringParameter stringParameterChecker;
 
     @Override
     protected DepartmentRepository getRepository() {
@@ -39,10 +42,15 @@ public class DepartmentService extends BaseService<DepartmentEntity, Long> {
     }
 
     @Override
-    protected void updateEntity(DepartmentEntity entity, DepartmentEntity existingEntity) {
-        existingEntity.setName(entity.getName());
-        existingEntity.setDescription(entity.getDescription());
+    protected void updateEntity(UpdateDepartmentDTO dto, DepartmentEntity existingEntity) {
+        if (stringParameterChecker.checkRequestsInputStringParameter(dto.getName())) {
+            existingEntity.setName(dto.getName());
+        }
+        if (stringParameterChecker.checkRequestsInputStringParameter(dto.getDescription())) {
+            existingEntity.setDescription(dto.getDescription());
+        }
     }
+
 
     @Override
     protected Map<Messages, Function<Object, Optional<DepartmentEntity>>> getUniqueFieldCheckers() {

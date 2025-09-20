@@ -21,11 +21,6 @@ public class DepartmentMapper implements BaseMapper<DepartmentEntity, AddDepartm
     }
 
     @Override
-    public DepartmentEntity toUpdateEntity(UpdateDepartmentDTO updateDepartmentDTO) {
-        return mapper.map(updateDepartmentDTO, DepartmentEntity.class);
-    }
-
-    @Override
     public ViewDepartmentDTO toViewDto(DepartmentEntity departmentEntity) {
         return mapper.map(departmentEntity, ViewDepartmentDTO.class);
     }

@@ -28,15 +28,6 @@ public class ProfessorMapper implements BaseMapper<ProfessorEntity, AddProfessor
     }
 
     @Override
-    public ProfessorEntity toUpdateEntity(UpdateProfessorDTO updateProfessorDTO) {
-        ProfessorEntity professorEntity = mapper.map(updateProfessorDTO, ProfessorEntity.class);
-        professorEntity.setGender(updateProfessorDTO.getGenderString()
-                .equals("MALE") ? Gender.MALE : Gender.FEMALE);
-        professorEntity.setBirthDay(new Date(updateProfessorDTO.getBirthDayTimeStamp()));
-        return professorEntity;
-    }
-
-    @Override
     public ViewProfessorDTO toViewDto(ProfessorEntity professorEntity) {
         ViewProfessorDTO viewProfessorDTO = mapper.map(professorEntity, ViewProfessorDTO.class);
 

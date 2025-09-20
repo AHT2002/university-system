@@ -1,5 +1,6 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.dto.StudentCourseGrade.UpdateGradeDTO;
 import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.entity.StudentEntity;
 import com.example.university_system.entity.CourseEntity;
@@ -19,7 +20,7 @@ import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
-public class StudentCourseGradeService extends BaseService<StudentCourseGradeEntity, Long> {
+public class StudentCourseGradeService extends BaseService<StudentCourseGradeEntity, Long, UpdateGradeDTO> {
 
     private final StudentCourseGradeRepository gradeRepository;
     private final StudentService studentService;
@@ -67,12 +68,14 @@ public class StudentCourseGradeService extends BaseService<StudentCourseGradeEnt
     }
 
     @Override
-    protected void updateEntity(StudentCourseGradeEntity entity, StudentCourseGradeEntity existingEntity) {
-        if (entity.getGrade() != null) {
-            existingEntity.setGrade(entity.getGrade());
+    protected void updateEntity(UpdateGradeDTO dto, StudentCourseGradeEntity existingEntity) {
+        if (dto.getGrade() != null) {
+            existingEntity.setGrade(dto.getGrade());
         }
-        existingEntity.setStatus(entity.getStatus());
+        existingEntity.setStatus(dto.getStatus());
     }
+
+
 
     @CacheEvict(cacheNames = {"studentCourseGrades", "allStudentCourseGrades"}, allEntries = true)
     public StudentCourseGradeEntity addGrade(Long studentId, Long courseId, Float grade, CourseGradeStatus status) {

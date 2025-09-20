@@ -3,7 +3,6 @@ package com.example.university_system.component.maper;
 import com.example.university_system.dto.student.AddStudentDTO;
 import com.example.university_system.dto.student.UpdateStudentDTO;
 import com.example.university_system.dto.student.ViewStudentDTO;
-import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.entity.StudentEntity;
 import com.example.university_system.enums.Gender;
@@ -30,21 +29,9 @@ public class StudentMapper implements BaseMapper<StudentEntity, AddStudentDTO, U
     }
 
     @Override
-    public StudentEntity toUpdateEntity(UpdateStudentDTO updateStudentDTO) {
-        StudentEntity studentEntity = mapper.map(updateStudentDTO, StudentEntity.class);
-        studentEntity.setGender(updateStudentDTO.getGenderString()
-                .equals("MALE") ? Gender.MALE : Gender.FEMALE);
-        studentEntity.setBirthDay(new Date(updateStudentDTO.getBirthDayTimeStamp()));
-        return studentEntity;
-    }
-
-    @Override
     public ViewStudentDTO toViewDto(StudentEntity studentEntity) {
         ViewStudentDTO viewStudentDTO = mapper.map(studentEntity, ViewStudentDTO.class);
 
-//        List<Integer> coursesCode = studentEntity.getCourses().stream()
-//                .map(CourseEntity::getCode)
-//                .toList();
         List<Integer> coursesCode = studentEntity.getCourseGrades().stream()
                 .map(StudentCourseGradeEntity::getCourse)
                 .map(course -> course.getCode())
