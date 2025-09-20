@@ -24,12 +24,6 @@ public class LessonMapper implements BaseMapper<LessonEntity, AddLessonDTO, Upda
         return lessonEntity;
     }
 
-    @Override
-    public LessonEntity toUpdateEntity(UpdateLessonDTO updateLessonDTO) {
-        LessonEntity lessonEntity = mapper.map(updateLessonDTO, LessonEntity.class);
-        lessonEntity.setDepartmentEntity(departmentService.findByName(updateLessonDTO.getDepartmentName()));
-        return lessonEntity;
-    }
 
     @Override
     public ViewLessonDTO toViewDto(LessonEntity lessonEntity) {

@@ -17,7 +17,7 @@ public class DynamicCacheResolver extends SimpleCacheResolver {
     protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
         Object target = context.getTarget();
         if (target instanceof BaseService) {
-            BaseService<?, ?> baseService = (BaseService<?, ?>) target;
+            BaseService<?, ?, ?> baseService = (BaseService<?, ?, ?>) target;
             String cacheName = context.getOperation().getCacheNames().contains("cacheName")
                     ? baseService.getCacheName()
                     : baseService.getAllCacheName();

@@ -1,5 +1,6 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.dto.professor.UpdateProfessorDTO;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.ProfessorEntity;
@@ -7,6 +8,7 @@ import com.example.university_system.repository.ProfessorRepository;
 import com.example.university_system.service.BaseService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import com.example.university_system.component.CheckRequestsInputStringParameter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +18,10 @@ import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
-public class ProfessorService extends BaseService<ProfessorEntity, Long> {
+public class ProfessorService extends BaseService<ProfessorEntity, Long, UpdateProfessorDTO> {
 
     private final ProfessorRepository professorRepository;
+    private final CheckRequestsInputStringParameter stringParameterChecker;
 
     @Override
     protected ProfessorRepository getRepository() {
@@ -64,15 +67,12 @@ public class ProfessorService extends BaseService<ProfessorEntity, Long> {
         }
     }
 
-
     @Override
-    protected void updateEntity(ProfessorEntity entity, ProfessorEntity existingEntity) {
-        existingEntity.setName(entity.getName());
-        existingEntity.setFamily(entity.getFamily());
-        existingEntity.setGender(entity.getGender());
-        existingEntity.setBirthDay(entity.getBirthDay());
-        existingEntity.setPassword(entity.getPassword());
-        existingEntity.setAcademicRank(entity.getAcademicRank());
+    protected void updateEntity(UpdateProfessorDTO dto, ProfessorEntity existingEntity) {
+        if (stringParameterChecker.checkRequestsInputStringParameter(dto.getName())) existingEntity.setName(dto.getName());
+        if (stringParameterChecker.checkRequestsInputStringParameter(dto.getFamily())) existingEntity.setFamily(dto.getFamily());
+        if (dto.getPassword() != null) existingEntity.setPassword(dto.getPassword());
+        if (dto.getAcademicRank() != null) existingEntity.setAcademicRank(dto.getAcademicRank());
     }
 
 

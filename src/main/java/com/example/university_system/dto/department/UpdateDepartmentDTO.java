@@ -9,8 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateDepartmentDTO extends UpdateBaseDTO {
-    @NotBlank
     private String name;
-
     private String description;
 }

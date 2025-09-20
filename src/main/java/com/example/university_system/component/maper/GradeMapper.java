@@ -4,8 +4,6 @@ import com.example.university_system.dto.StudentCourseGrade.AddGradeDTO;
 import com.example.university_system.dto.StudentCourseGrade.UpdateGradeDTO;
 import com.example.university_system.dto.StudentCourseGrade.ViewGradeDTO;
 import com.example.university_system.entity.StudentCourseGradeEntity;
-import com.example.university_system.exception.NotFoundException;
-import com.example.university_system.repository.StudentCourseGradeRepository;
 import com.example.university_system.service.impl.StudentService;
 import com.example.university_system.service.impl.CourseService;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,6 @@ public class GradeMapper implements BaseMapper<StudentCourseGradeEntity, AddGrad
 
     private final StudentService studentService;
     private final CourseService courseService;
-    private final StudentCourseGradeRepository studentCourseGradeRepository;
     private final ModelMapper mapper;
 
     @Override
@@ -31,17 +28,6 @@ public class GradeMapper implements BaseMapper<StudentCourseGradeEntity, AddGrad
         entity.setCourse(courseService.findById(addDto.getCourseId()));
         entity.setGrade(addDto.getGrade()); // می‌تونه null باشه
         entity.setStatus(addDto.getStatus()); // اجباری
-        return entity;
-    }
-
-
-    @Override
-    public StudentCourseGradeEntity toUpdateEntity(UpdateGradeDTO updateDto) {
-        StudentCourseGradeEntity entity = studentCourseGradeRepository.findById(updateDto.getId())
-                .orElseThrow(() -> new NotFoundException("Grade with id " + updateDto.getId() + " not found"));
-
-        mapper.map(updateDto, entity);
-
         return entity;
     }
 

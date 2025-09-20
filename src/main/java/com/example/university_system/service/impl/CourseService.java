@@ -1,5 +1,6 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.dto.course.UpdateCourseDTO;
 import com.example.university_system.entity.*;
 import com.example.university_system.enums.CourseGradeStatus;
 import com.example.university_system.enums.Messages;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class CourseService extends BaseService<CourseEntity, Long> {
+public class CourseService extends BaseService<CourseEntity, Long, UpdateCourseDTO> {
 
     private final CourseRepository courseRepository;
     private final StudentService studentService;
@@ -67,14 +68,16 @@ public class CourseService extends BaseService<CourseEntity, Long> {
     }
 
     @Override
-    protected void updateEntity(CourseEntity entity, CourseEntity existingEntity) {
-        existingEntity.setSemester(entity.getSemester());
-        if (entity.getLessonEntity() != null) {
-            LessonEntity lesson = lessonService.findByLessonCode(entity.getLessonEntity().getLessonCode());
+    protected void updateEntity(UpdateCourseDTO dto, CourseEntity existingEntity) {
+        if (dto.getSemester() != null) {
+            existingEntity.setSemester(dto.getSemester());
+        }
+        if (dto.getLessonCode() != null) {
+            LessonEntity lesson = lessonService.findByLessonCode(dto.getLessonCode());
             existingEntity.setLessonEntity(lesson);
         }
-        if (entity.getProfessorEntity() != null) {
-            ProfessorEntity professor = professorService.findByCode(entity.getProfessorEntity().getCode());
+        if (dto.getProfessorCode() != null) {
+            ProfessorEntity professor = professorService.findByCode(dto.getProfessorCode());
             existingEntity.setProfessorEntity(professor);
         }
     }

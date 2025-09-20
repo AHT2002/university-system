@@ -29,14 +29,6 @@ public class CourseMapper implements BaseMapper<CourseEntity, AddCourseDTO, Upda
     }
 
     @Override
-    public CourseEntity toUpdateEntity(UpdateCourseDTO updateCourseDTO) {
-        CourseEntity courseEntity = mapper.map(updateCourseDTO, CourseEntity.class);
-        LessonEntity lesson = lessonService.findByLessonCode(updateCourseDTO.getLessonCode());
-        courseEntity.setLessonEntity(lesson);
-        return courseEntity;
-    }
-
-    @Override
     public ViewCourseDTO toViewDto(CourseEntity courseEntity) {
         ViewCourseDTO viewCourseDTO = mapper.map(courseEntity, ViewCourseDTO.class);
 

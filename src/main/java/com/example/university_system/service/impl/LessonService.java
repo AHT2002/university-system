@@ -1,25 +1,24 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.dto.lesson.UpdateLessonDTO;
 import com.example.university_system.entity.DepartmentEntity;
 import com.example.university_system.entity.LessonEntity;
 import com.example.university_system.enums.Messages;
-import com.example.university_system.exception.ConflictException;
-import com.example.university_system.exception.NotFoundException;
 import com.example.university_system.repository.LessonRepository;
 import com.example.university_system.service.BaseService;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
-public class LessonService extends BaseService<LessonEntity, Long> {
+public class LessonService extends BaseService<LessonEntity, Long, UpdateLessonDTO> {
 
     private final LessonRepository lessonRepository;
     private final DepartmentService departmentService;
@@ -45,15 +44,31 @@ public class LessonService extends BaseService<LessonEntity, Long> {
     }
 
     @Override
-    protected void updateEntity(LessonEntity entity, LessonEntity existingEntity) {
-        existingEntity.setTitle(entity.getTitle());
-        existingEntity.setUnits(entity.getUnits());
-
-        if (entity.getDepartmentEntity() != null) {
-            DepartmentEntity department = departmentService.findByName(entity.getDepartmentEntity().getName());
-            existingEntity.setDepartmentEntity(department);
+    protected void updateEntity(UpdateLessonDTO dto, LessonEntity existingEntity) {
+        if (dto.getTitle() != null) {
+            existingEntity.setTitle(dto.getTitle());
+        }
+        if (dto.getUnits() != null) {
+            existingEntity.setUnits(dto.getUnits());
+        }
+        if (dto.getDepartmentId() != null) {
+            existingEntity.setDepartmentEntity(departmentService.findById(dto.getDepartmentId()));
+        }
+        if (dto.getPreRequisiteLessonsId() != null) {
+            List<LessonEntity> prereqs = dto.getPreRequisiteLessonsId().stream()
+                    .map(this::findById)
+                    .toList();
+            existingEntity.setPrerequisites(prereqs);
+        }
+        if (dto.getCoRequisiteLessonsId() != null) {
+            List<LessonEntity> coreqs = dto.getCoRequisiteLessonsId().stream()
+                    .map(this::findById)
+                    .toList();
+            existingEntity.setCorequisites(coreqs);
         }
     }
+
+
 
     @Override
     protected Map<Messages, Function<Object, Optional<LessonEntity>>> getUniqueFieldCheckers() {

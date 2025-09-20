@@ -1,11 +1,13 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.dto.student.UpdateStudentDTO;
 import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.StudentEntity;
 import com.example.university_system.repository.StudentRepository;
 import com.example.university_system.service.BaseService;
+import com.example.university_system.component.CheckRequestsInputStringParameter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,10 @@ import java.util.function.Function;
 
 @Service
 @AllArgsConstructor
-public class StudentService extends BaseService<StudentEntity, Long> {
+public class StudentService extends BaseService<StudentEntity, Long, UpdateStudentDTO> {
 
     private final StudentRepository studentRepository;
+    private final CheckRequestsInputStringParameter stringParameterChecker;
 
     @Override
     protected StudentRepository getRepository() {
@@ -65,16 +68,14 @@ public class StudentService extends BaseService<StudentEntity, Long> {
         }
     }
 
-
     @Override
-    protected void updateEntity(StudentEntity entity, StudentEntity existingEntity) {
-        existingEntity.setName(entity.getName());
-        existingEntity.setFamily(entity.getFamily());
-        existingEntity.setGender(entity.getGender());
-        existingEntity.setBirthDay(entity.getBirthDay());
-        existingEntity.setPassword(entity.getPassword());
-        existingEntity.setAcademicLevel(entity.getAcademicLevel());
+    protected void updateEntity(UpdateStudentDTO dto, StudentEntity existingEntity) {
+        if (stringParameterChecker.checkRequestsInputStringParameter(dto.getName())) existingEntity.setName(dto.getName());
+        if (stringParameterChecker.checkRequestsInputStringParameter(dto.getFamily())) existingEntity.setFamily(dto.getFamily());
+        if (dto.getPassword() != null) existingEntity.setPassword(dto.getPassword());
+        if (dto.getAcademicLevel() != null) existingEntity.setAcademicLevel(dto.getAcademicLevel());
     }
+
 
     public StudentEntity findByStdNumber(Long stdNumber) {
         return findByField(stdNumber, studentRepository::findByStdNumber);

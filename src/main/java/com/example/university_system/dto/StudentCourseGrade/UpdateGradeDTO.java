@@ -2,6 +2,8 @@ package com.example.university_system.dto.StudentCourseGrade;
 
 import com.example.university_system.dto.base.UpdateBaseDTO;
 import com.example.university_system.enums.CourseGradeStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -17,5 +19,6 @@ public class UpdateGradeDTO extends UpdateBaseDTO {
     private Float grade;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private CourseGradeStatus status;
 }

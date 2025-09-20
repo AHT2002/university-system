@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class BaseController<T extends BaseEntity, ID, A, U, V> {
 
-    protected abstract BaseService<T, ID> getService();
+    protected abstract BaseService<T, ID, U> getService();
     protected abstract BaseMapper<T, A, U, V> getMapper();
 
     @PostMapping("/save")
@@ -21,11 +21,10 @@ public abstract class BaseController<T extends BaseEntity, ID, A, U, V> {
         return getMapper().toViewDto(savedEntity);
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public V update(@RequestBody U updateDto) {
-        T entity = getMapper().toUpdateEntity(updateDto);
-        T updatedEntity = getService().update(entity, (ID) entity.getId());
+    public V update(@RequestBody U updateDto, @PathVariable ID id) {
+        T updatedEntity = getService().update(updateDto, id);
         return getMapper().toViewDto(updatedEntity);
     }
 

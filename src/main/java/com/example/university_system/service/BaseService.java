@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public abstract class BaseService<T extends BaseEntity, ID> {
+public abstract class BaseService<T extends BaseEntity, ID, U> {
 
     protected abstract JpaRepository<T, ID> getRepository();
     protected abstract Messages getNotFoundMessage();
     public abstract String getCacheName();
     public abstract String getAllCacheName();
-    protected abstract void updateEntity(T entity, T existingEntity);
+    protected abstract void updateEntity(U updateDto, T existingEntity);
     protected abstract Map<Messages, Function<Object, Optional<T>>> getUniqueFieldCheckers();
     protected abstract Object getFieldValue(T entity, Messages message);
 
@@ -52,18 +52,17 @@ public abstract class BaseService<T extends BaseEntity, ID> {
     }
 
 
-
-
-    public T update(T entity, ID id) {
+    public T update(U updateDto, ID id) {
         if (id == null) {
             throw new IllegalArgumentException("شناسه نمی‌تواند null باشد");
         }
         T existingEntity = findById(id);
-        updateEntity(entity, existingEntity);
+        updateEntity(updateDto, existingEntity);
         return save(existingEntity);
     }
 
-    @Cacheable(cacheNames = "cacheName",
+
+    @Cacheable(cacheNames = "#this.getCacheName()",
             key = "#id",
             unless = "#result == null",
             cacheResolver = "cacheResolver")
@@ -75,7 +74,7 @@ public abstract class BaseService<T extends BaseEntity, ID> {
         return optional.get();
     }
 
-    @Cacheable(cacheNames = "allCacheName",
+    @Cacheable(cacheNames = "#this.getAllCacheName()",
             unless = "#result.isEmpty()",
             cacheResolver = "cacheResolver")
     public List<T> findAll() {
