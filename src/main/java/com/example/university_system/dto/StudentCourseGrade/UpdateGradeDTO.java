@@ -14,8 +14,8 @@ import lombok.Setter;
 @Getter
 public class UpdateGradeDTO extends UpdateBaseDTO {
 
-    @Min(0)
-    @Max(20)
+    @Min(value = 0, message = "نمره نمی‌تواند کمتر از ۰ باشد")
+    @Max(value = 20, message = "نمره نمی‌تواند بیشتر از ۲۰ باشد")
     private Float grade;
 
     @NotNull

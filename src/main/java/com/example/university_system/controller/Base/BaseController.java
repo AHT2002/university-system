@@ -3,6 +3,7 @@ package com.example.university_system.controller.Base;
 import com.example.university_system.entity.BaseEntity;
 import com.example.university_system.component.maper.BaseMapper;
 import com.example.university_system.service.BaseService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public abstract class BaseController<T extends BaseEntity, ID, A, U, V> {
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)
-    public V save(@RequestBody A addDto) {
+    public V save(@RequestBody @Valid A addDto) {
         T entity = getMapper().toAddEntity(addDto);
         T savedEntity = getService().save(entity);
         return getMapper().toViewDto(savedEntity);
@@ -23,7 +24,7 @@ public abstract class BaseController<T extends BaseEntity, ID, A, U, V> {
 
     @PutMapping("/update/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public V update(@RequestBody U updateDto, @PathVariable ID id) {
+    public V update(@RequestBody @Valid U updateDto, @PathVariable ID id) {
         T updatedEntity = getService().update(updateDto, id);
         return getMapper().toViewDto(updatedEntity);
     }

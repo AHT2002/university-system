@@ -1,36 +1,62 @@
 package com.example.university_system.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class RestExceptionHandler {
-    @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<Object> handleNotFoundException(NotFoundException notFoundException){
-        ApiException apiException = new ApiException(HttpStatus.NOT_FOUND,
-                notFoundException.getMessage(), LocalDateTime.now()
+
+    private ResponseEntity<Object> buildResponseEntity(HttpStatus status, String message, HttpServletRequest request) {
+        ApiException apiException = new ApiException(
+                status,
+                message,
+                LocalDateTime.now(),
+                request.getRequestURI()
         );
-        return new ResponseEntity<>(apiException, apiException.getStatus());
+        return new ResponseEntity<>(apiException, status);
     }
 
-    @ExceptionHandler({ConflictException.class})
-    protected ResponseEntity<Object> handleConflictException(ConflictException exception) {
-        ApiException apiException = new ApiException(CONFLICT
-                , exception.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(apiException, apiException.getStatus());
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
+        return buildResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class})
-    protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException exception) {
-        ApiException apiException = new ApiException(BAD_REQUEST
-                , exception.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(apiException, apiException.getStatus());
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException(ConflictException ex, HttpServletRequest request) {
+        return buildResponseEntity(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage()));
+
+        ApiException apiException = new ApiException(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed",
+                LocalDateTime.now(),
+                request.getRequestURI(),
+                errors
+        );
+        return new ResponseEntity<>(apiException, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleAll(Exception ex, HttpServletRequest request) {
+        return buildResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error: " + ex.getMessage(), request);
     }
 }
