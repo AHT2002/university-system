@@ -50,6 +50,18 @@ public enum Messages {
     GRADE_NOT_FOUND("نمره یافت نشد"),
     DUPLICATE_GRADE("جفت واحد درسی و دانشجوی تکراری"),
     GRADE_NOT_VALID("نمره وارد شده نامعتبر است\nمقدار نمره باید بین ۰ تا ۲۰ باشد"),
+
+    // Faculty
+    FACULTY_NOT_FOUND("دانشکده یافت نشد"),
+    FACULTY_AVAILABLE_BY_Name("دانشکده با نام داده شده در سیستم موجود است"),
+
+    // Classroom
+    CLASSROOM_NOT_FOUND("کلاس درس یافت نشد"),
+    CLASSROOM_AVAILABLE_BY_CODE("کلاس درس با کد داده شده در سیستم موجود است"),
+
+    // Lecture
+    LECTURE_NOT_FOUND("جلسه درسی یافت نشد"),
+    LECTURE_AVAILABLE_BY_CODE("جلسه درسی با کد داده شده در سیستم موجود است"),
     ;
 
 

@@ -1,7 +1,6 @@
 package com.example.university_system.component.maper;
 
 import com.example.university_system.dto.professor.AddProfessorDTO;
-import com.example.university_system.dto.professor.UpdateProfessorDTO;
 import com.example.university_system.dto.professor.ViewProfessorDTO;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.ProfessorEntity;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class ProfessorMapper implements BaseMapper<ProfessorEntity, AddProfessorDTO, UpdateProfessorDTO, ViewProfessorDTO>{
+public class ProfessorMapper implements BaseMapper<ProfessorEntity, AddProfessorDTO, ViewProfessorDTO>{
     private final ModelMapper mapper;
 
     @Override
@@ -39,6 +38,8 @@ public class ProfessorMapper implements BaseMapper<ProfessorEntity, AddProfessor
         viewProfessorDTO.setBirthDayTimeStamp(professorEntity.getBirthDay().getTime());
 
         viewProfessorDTO.setGenderString(professorEntity.getGender().name());
+        viewProfessorDTO.setEmail(professorEntity.getEmail());
+        viewProfessorDTO.setPhone(professorEntity.getPhoneNumber());
 
         return viewProfessorDTO;
     }

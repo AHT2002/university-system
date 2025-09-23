@@ -13,4 +13,6 @@ public class ViewUserDTO extends ViewBaseDTO {
     private String genderString;
     private Long birthDayTimeStamp;
     private String username;
+    private String email;
+    private String phone;
 }

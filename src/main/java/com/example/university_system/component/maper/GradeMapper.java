@@ -1,7 +1,6 @@
 package com.example.university_system.component.maper;
 
 import com.example.university_system.dto.StudentCourseGrade.AddGradeDTO;
-import com.example.university_system.dto.StudentCourseGrade.UpdateGradeDTO;
 import com.example.university_system.dto.StudentCourseGrade.ViewGradeDTO;
 import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.service.impl.StudentService;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
-public class GradeMapper implements BaseMapper<StudentCourseGradeEntity, AddGradeDTO, UpdateGradeDTO, ViewGradeDTO> {
+public class GradeMapper implements BaseMapper<StudentCourseGradeEntity, AddGradeDTO, ViewGradeDTO> {
 
     private final StudentService studentService;
     private final CourseService courseService;
