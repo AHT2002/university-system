@@ -52,6 +52,9 @@ public abstract class BaseService<T extends BaseEntity, ID, U> {
     }
 
 
+    @CacheEvict(cacheNames = {"#this.getCacheName()", "#this.getAllCacheName()"},
+            allEntries = true,
+            cacheResolver = "cacheResolver")
     public T update(U updateDto, ID id) {
         if (id == null) {
             throw new IllegalArgumentException("شناسه نمی‌تواند null باشد");

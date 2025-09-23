@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Setter
@@ -30,4 +32,7 @@ public class CourseEntity extends BaseEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<StudentCourseGradeEntity> studentGrades = new HashSet<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LectureEntity> lectures = new ArrayList<>();
 }

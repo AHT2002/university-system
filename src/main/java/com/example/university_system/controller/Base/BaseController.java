@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class BaseController<T extends BaseEntity, ID, A, U, V> {
 
     protected abstract BaseService<T, ID, U> getService();
-    protected abstract BaseMapper<T, A, U, V> getMapper();
+    protected abstract BaseMapper<T, A, V> getMapper();
 
     @PostMapping("/save")
     @ResponseStatus(HttpStatus.CREATED)

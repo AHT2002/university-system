@@ -1,7 +1,6 @@
 package com.example.university_system.component.maper;
 
 import com.example.university_system.dto.department.AddDepartmentDTO;
-import com.example.university_system.dto.department.UpdateDepartmentDTO;
 import com.example.university_system.dto.department.ViewDepartmentDTO;
 import com.example.university_system.entity.DepartmentEntity;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class DepartmentMapper implements BaseMapper<DepartmentEntity, AddDepartmentDTO, UpdateDepartmentDTO, ViewDepartmentDTO>{
+public class DepartmentMapper implements BaseMapper<DepartmentEntity, AddDepartmentDTO, ViewDepartmentDTO>{
     private final ModelMapper mapper;
 
     @Override

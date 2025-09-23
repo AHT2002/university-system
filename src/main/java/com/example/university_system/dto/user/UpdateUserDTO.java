@@ -16,4 +16,7 @@ public class UpdateUserDTO extends UpdateBaseDTO {
 
     @NotBlank
     private String password;
+
+    private String email;
+    private String phone;
 }

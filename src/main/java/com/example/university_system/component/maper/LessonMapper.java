@@ -1,7 +1,6 @@
 package com.example.university_system.component.maper;
 
 import com.example.university_system.dto.lesson.AddLessonDTO;
-import com.example.university_system.dto.lesson.UpdateLessonDTO;
 import com.example.university_system.dto.lesson.ViewLessonDTO;
 import com.example.university_system.entity.LessonEntity;
 import com.example.university_system.service.impl.DepartmentService;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-public class LessonMapper implements BaseMapper<LessonEntity, AddLessonDTO, UpdateLessonDTO, ViewLessonDTO>{
+public class LessonMapper implements BaseMapper<LessonEntity, AddLessonDTO, ViewLessonDTO>{
     private final ModelMapper mapper;
     private final DepartmentService departmentService;
 
