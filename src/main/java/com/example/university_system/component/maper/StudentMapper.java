@@ -4,26 +4,35 @@ import com.example.university_system.dto.student.AddStudentDTO;
 import com.example.university_system.dto.student.ViewStudentDTO;
 import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.entity.StudentEntity;
-import com.example.university_system.enums.Gender;
+import com.example.university_system.enums.UserRules;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
 public class StudentMapper implements BaseMapper<StudentEntity, AddStudentDTO, ViewStudentDTO>{
 
     private final ModelMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public StudentEntity toAddEntity(AddStudentDTO addStudentDTO) {
         StudentEntity studentEntity = mapper.map(addStudentDTO, StudentEntity.class);
-        studentEntity.setGender(addStudentDTO.getGenderString()
-                .equals("MALE") ? Gender.MALE : Gender.FEMALE);
         studentEntity.setBirthDay(new Date(addStudentDTO.getBirthDayTimeStamp()));
+        studentEntity.setPassword(passwordEncoder.encode(addStudentDTO.getPassword()));
+        studentEntity.setPhoneNumber(addStudentDTO.getPhoneNumber());
+
+        Set<UserRules> roles = new HashSet<>();
+        roles.add(UserRules.STUDENT);
+        studentEntity.setUserRules(roles);
+
         return studentEntity;
     }
 

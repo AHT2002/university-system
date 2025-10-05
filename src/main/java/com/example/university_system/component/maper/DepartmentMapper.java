@@ -3,6 +3,7 @@ package com.example.university_system.component.maper;
 import com.example.university_system.dto.department.AddDepartmentDTO;
 import com.example.university_system.dto.department.ViewDepartmentDTO;
 import com.example.university_system.entity.DepartmentEntity;
+import com.example.university_system.service.impl.ProfessorService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -13,15 +14,21 @@ import java.util.List;
 @AllArgsConstructor
 public class DepartmentMapper implements BaseMapper<DepartmentEntity, AddDepartmentDTO, ViewDepartmentDTO>{
     private final ModelMapper mapper;
+    private final ProfessorService professorService;
 
     @Override
     public DepartmentEntity toAddEntity(AddDepartmentDTO addDepartmentDTO) {
-        return mapper.map(addDepartmentDTO, DepartmentEntity.class);
+        DepartmentEntity departmentEntity = mapper.map(addDepartmentDTO, DepartmentEntity.class);
+        departmentEntity.setManager(professorService.findByCode(addDepartmentDTO.getManagerCode()));
+        return departmentEntity;
     }
 
     @Override
     public ViewDepartmentDTO toViewDto(DepartmentEntity departmentEntity) {
-        return mapper.map(departmentEntity, ViewDepartmentDTO.class);
+        ViewDepartmentDTO dto = mapper.map(departmentEntity, ViewDepartmentDTO.class);
+        dto.setManagerCode(departmentEntity.getManager().getCode());
+        dto.setManagerName(departmentEntity.getManager().getName() + " " + departmentEntity.getManager().getFamily());
+        return dto;
     }
 
     @Override

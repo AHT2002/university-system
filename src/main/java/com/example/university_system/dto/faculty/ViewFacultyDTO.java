@@ -9,4 +9,8 @@ import lombok.Setter;
 @Setter
 public class ViewFacultyDTO extends ViewBaseDTO {
     private String name;
+    private int managerCode;
+    private String managerName;
+    private int assistantCode;
+    private String assistantName;
 }

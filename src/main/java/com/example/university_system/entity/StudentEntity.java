@@ -16,7 +16,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 public class StudentEntity extends UserEntity {
-
     @Column(unique = true, nullable = false, updatable = false)
     private long stdNumber;
 

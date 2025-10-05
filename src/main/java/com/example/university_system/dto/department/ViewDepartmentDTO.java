@@ -9,4 +9,6 @@ import lombok.Setter;
 public class ViewDepartmentDTO extends ViewBaseDTO {
     private String name;
     private String description;
+    private int managerCode;
+    private String managerName;
 }

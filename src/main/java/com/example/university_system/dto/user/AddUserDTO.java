@@ -1,6 +1,9 @@
 package com.example.university_system.dto.user;
 
 import com.example.university_system.dto.base.AddBaseDTO;
+import com.example.university_system.enums.Gender;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -19,8 +22,9 @@ public class AddUserDTO extends AddBaseDTO {
     @Positive
     private String nationalCode;
 
+    @Enumerated(EnumType.STRING)
     @NotBlank
-    private String genderString;
+    private Gender genderString;
 
     @NotNull
     private Long birthDayTimeStamp;
@@ -33,5 +37,7 @@ public class AddUserDTO extends AddBaseDTO {
 
     private String email;
 
-    private String phone;
+    private String phoneNumber;
+
+
 }

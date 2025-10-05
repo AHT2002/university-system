@@ -3,6 +3,8 @@ package com.example.university_system.component.maper;
 import com.example.university_system.dto.faculty.AddFacultyDTO;
 import com.example.university_system.dto.faculty.ViewFacultyDTO;
 import com.example.university_system.entity.FacultyEntity;
+import com.example.university_system.entity.ProfessorEntity;
+import com.example.university_system.service.impl.ProfessorService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -13,15 +15,26 @@ import java.util.List;
 @AllArgsConstructor
 public class FacultyMapper implements BaseMapper<FacultyEntity, AddFacultyDTO, ViewFacultyDTO>{
     private final ModelMapper mapper;
+    private final ProfessorService professorService;
 
     @Override
     public FacultyEntity toAddEntity(AddFacultyDTO addFacultyDTO) {
-        return mapper.map(addFacultyDTO, FacultyEntity.class);
+        FacultyEntity facultyEntity = mapper.map(addFacultyDTO, FacultyEntity.class);
+        ProfessorEntity manager = professorService.findByCode(addFacultyDTO.getManagerCode());
+        ProfessorEntity assistant = professorService.findByCode(addFacultyDTO.getAssistantCode());
+        facultyEntity.setManager(manager);
+        facultyEntity.setAssistant(assistant);
+        return facultyEntity;
     }
 
     @Override
     public ViewFacultyDTO toViewDto(FacultyEntity facultyEntity) {
-        return mapper.map(facultyEntity, ViewFacultyDTO.class);
+        ViewFacultyDTO dto = mapper.map(facultyEntity, ViewFacultyDTO.class);
+        dto.setManagerCode(facultyEntity.getManager().getCode());
+        dto.setManagerName(facultyEntity.getManager().getName() + " " + facultyEntity.getManager().getFamily());
+        dto.setAssistantCode(facultyEntity.getAssistant().getCode());
+        dto.setAssistantName(facultyEntity.getAssistant().getName() + " " + facultyEntity.getAssistant().getFamily());
+        return dto;
     }
 
     @Override
