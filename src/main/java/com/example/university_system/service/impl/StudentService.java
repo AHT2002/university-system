@@ -1,14 +1,21 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.component.maper.StudentMapper;
+import com.example.university_system.dto.RegisterUserResponseDto;
+import com.example.university_system.dto.security.authentication.response.AuthenticationResponseDto;
+import com.example.university_system.dto.student.AddStudentDTO;
 import com.example.university_system.dto.student.UpdateStudentDTO;
 import com.example.university_system.entity.StudentCourseGradeEntity;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.StudentEntity;
-import com.example.university_system.repository.StudentRepository;
+import com.example.university_system.repository.user.StudentRepository;
 import com.example.university_system.service.BaseService;
 import com.example.university_system.component.CheckRequestsInputStringParameter;
+import com.example.university_system.service.security.AuthenticationService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -23,6 +30,9 @@ public class StudentService extends BaseService<StudentEntity, Long, UpdateStude
 
     private final StudentRepository studentRepository;
     private final CheckRequestsInputStringParameter stringParameterChecker;
+    private final AuthenticationService authenticationService;
+    private final StudentMapper studentMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected StudentRepository getRepository() {
@@ -72,7 +82,7 @@ public class StudentService extends BaseService<StudentEntity, Long, UpdateStude
     protected void updateEntity(UpdateStudentDTO dto, StudentEntity existingEntity) {
         if (stringParameterChecker.checkRequestsInputStringParameter(dto.getName())) existingEntity.setName(dto.getName());
         if (stringParameterChecker.checkRequestsInputStringParameter(dto.getFamily())) existingEntity.setFamily(dto.getFamily());
-        if (dto.getPassword() != null) existingEntity.setPassword(dto.getPassword());
+        if (dto.getPassword() != null) existingEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         if (dto.getAcademicLevel() != null) existingEntity.setAcademicLevel(dto.getAcademicLevel());
     }
 
@@ -84,5 +94,17 @@ public class StudentService extends BaseService<StudentEntity, Long, UpdateStude
     public List<CourseEntity> listCoursesStudent(Long stdNumber) {
         StudentEntity student = findByStdNumber(stdNumber);
         return student.getCourseGrades().stream().map(StudentCourseGradeEntity::getCourse).toList();
+    }
+
+    @CacheEvict(cacheNames = {"student", "allStudent"},
+            allEntries = true,
+            cacheResolver = "cacheResolver")
+    public RegisterUserResponseDto register(AddStudentDTO addStudentDTO) {
+        AuthenticationResponseDto authenticationResponse = authenticationService.register(addStudentDTO, studentMapper, studentRepository);
+        StudentEntity student = findByStdNumber(addStudentDTO.getStdNumber());
+        return RegisterUserResponseDto.builder()
+                .user(studentMapper.toViewDto(student))
+                .authentication(authenticationResponse)
+                .build();
     }
 }

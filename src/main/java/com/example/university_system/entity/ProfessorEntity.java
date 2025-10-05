@@ -15,7 +15,6 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 public class ProfessorEntity extends UserEntity {
-
     @Column(unique = true, nullable = false, updatable = false)
     private int code;
 

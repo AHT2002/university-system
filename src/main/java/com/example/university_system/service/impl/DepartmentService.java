@@ -20,6 +20,7 @@ public class DepartmentService extends BaseService<DepartmentEntity, Long, Updat
 
     private final DepartmentRepository departmentRepository;
     private final CheckRequestsInputStringParameter stringParameterChecker;
+    private final ProfessorService professorService;
 
     @Override
     protected DepartmentRepository getRepository() {
@@ -49,6 +50,7 @@ public class DepartmentService extends BaseService<DepartmentEntity, Long, Updat
         if (stringParameterChecker.checkRequestsInputStringParameter(dto.getDescription())) {
             existingEntity.setDescription(dto.getDescription());
         }
+        if(dto.getManagerCode() != null) existingEntity.setManager(professorService.findByCode(dto.getManagerCode()));
     }
 
 

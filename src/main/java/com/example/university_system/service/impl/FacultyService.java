@@ -19,6 +19,7 @@ import java.util.function.Function;
 public class FacultyService extends BaseService<FacultyEntity, Long, UpdateFacultyDTO> {
     private final FacultyRepository facultyRepository;
     private final CheckRequestsInputStringParameter checkString;
+    private final ProfessorService professorService;
 
     @Override
     protected FacultyRepository getRepository() {
@@ -59,5 +60,7 @@ public class FacultyService extends BaseService<FacultyEntity, Long, UpdateFacul
     @Override
     protected void updateEntity(UpdateFacultyDTO dto, FacultyEntity existingEntity) {
         if(checkString.checkRequestsInputStringParameter(dto.getName())) existingEntity.setName(dto.getName());
+        if(dto.getManegerCode() != null) existingEntity.setManager(professorService.findByCode(dto.getManegerCode()));
+        if(dto.getAssistantCode() != null) existingEntity.setAssistant(professorService.findByCode(dto.getAssistantCode()));
     }
 }

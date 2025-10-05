@@ -1,8 +1,6 @@
 package com.example.university_system.dto.department;
 
 import com.example.university_system.dto.base.UpdateBaseDTO;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +9,5 @@ import lombok.Setter;
 public class UpdateDepartmentDTO extends UpdateBaseDTO {
     private String name;
     private String description;
+    private Integer managerCode;
 }

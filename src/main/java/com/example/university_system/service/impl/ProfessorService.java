@@ -1,12 +1,19 @@
 package com.example.university_system.service.impl;
 
+import com.example.university_system.component.maper.ProfessorMapper;
+import com.example.university_system.dto.RegisterUserResponseDto;
+import com.example.university_system.dto.professor.AddProfessorDTO;
 import com.example.university_system.dto.professor.UpdateProfessorDTO;
+import com.example.university_system.dto.security.authentication.response.AuthenticationResponseDto;
 import com.example.university_system.enums.Messages;
 import com.example.university_system.entity.CourseEntity;
 import com.example.university_system.entity.ProfessorEntity;
-import com.example.university_system.repository.ProfessorRepository;
+import com.example.university_system.repository.user.ProfessorRepository;
 import com.example.university_system.service.BaseService;
+import com.example.university_system.service.security.AuthenticationService;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.university_system.component.CheckRequestsInputStringParameter;
 
@@ -22,6 +29,9 @@ public class ProfessorService extends BaseService<ProfessorEntity, Long, UpdateP
 
     private final ProfessorRepository professorRepository;
     private final CheckRequestsInputStringParameter stringParameterChecker;
+    private final AuthenticationService authenticationService;
+    private final ProfessorMapper professorMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected ProfessorRepository getRepository() {
@@ -71,7 +81,7 @@ public class ProfessorService extends BaseService<ProfessorEntity, Long, UpdateP
     protected void updateEntity(UpdateProfessorDTO dto, ProfessorEntity existingEntity) {
         if (stringParameterChecker.checkRequestsInputStringParameter(dto.getName())) existingEntity.setName(dto.getName());
         if (stringParameterChecker.checkRequestsInputStringParameter(dto.getFamily())) existingEntity.setFamily(dto.getFamily());
-        if (dto.getPassword() != null) existingEntity.setPassword(dto.getPassword());
+        if (dto.getPassword() != null) existingEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
         if (dto.getAcademicRank() != null) existingEntity.setAcademicRank(dto.getAcademicRank());
     }
 
@@ -84,5 +94,18 @@ public class ProfessorService extends BaseService<ProfessorEntity, Long, UpdateP
     public List<CourseEntity> listCoursesProfessor(int code) {
         ProfessorEntity professor = findByCode(code);
         return professor.getCourses().stream().toList();
+    }
+
+
+    @CacheEvict(cacheNames = {"professor", "allProfessor"},
+            allEntries = true,
+            cacheResolver = "cacheResolver")
+    public RegisterUserResponseDto register(AddProfessorDTO addProfessorDTO) {
+        AuthenticationResponseDto authenticationResponse = authenticationService.register(addProfessorDTO, professorMapper, professorRepository);
+        ProfessorEntity professor = findByCode(addProfessorDTO.getCode());
+        return RegisterUserResponseDto.builder()
+                .user(professorMapper.toViewDto(professor))
+                .authentication(authenticationResponse)
+                .build();
     }
 }
